@@ -1,6 +1,7 @@
 import 'package:apt3065/src/screens/testbiologytopics.dart';
 import 'package:apt3065/src/screens/testchemistrytopics.dart';
 import 'package:apt3065/src/screens/testphysicstopics.dart';
+import 'package:apt3065/src/widgets/chatbutton.dart';
 import 'package:flutter/material.dart';
 
 class TestsPage extends StatefulWidget {
@@ -17,7 +18,9 @@ class _TestsPageState extends State<TestsPage> {
       appBar: AppBar(
         title: Text('QUIZZES'),
       ),
-      body: Padding(
+      body: Stack(
+      children: [ 
+      Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,6 +80,13 @@ class _TestsPageState extends State<TestsPage> {
             ),
           ],
         ),
+      ),
+      Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: ChatButton(), // Include the chat button
+          ),
+        ],
       ),
     );
   }

@@ -1,19 +1,22 @@
 import 'package:apt3065/src/screens/labsbiologytopics.dart';
 import 'package:apt3065/src/screens/labschemistrytopics.dart';
 import 'package:apt3065/src/screens/labsphysicstopics.dart';
+import 'package:apt3065/src/widgets/chatbutton.dart';
 import 'package:flutter/material.dart';
 
 
 class LabsPage extends StatelessWidget {
   const LabsPage({Key? key}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Labs'),
       ),
-      body: Padding(
+      body: Stack(
+      children: [
+        Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -71,8 +74,11 @@ class LabsPage extends StatelessWidget {
                 ),
               ),
             ),
-          ],
+          ], 
         ),
+      ),
+      ChatButton()
+      ],
       ),
     );
   }

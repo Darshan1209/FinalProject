@@ -2,10 +2,9 @@ import 'package:apt3065/src/constants/colors.dart';
 import 'package:apt3065/src/screens/experimentsList.dart';
 import 'package:apt3065/src/screens/topicsListPage.dart';
 import 'package:apt3065/src/utils/consumers_helper.dart';
+import 'package:apt3065/src/widgets/chatbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -21,7 +20,9 @@ class HomePage extends ConsumerWidget {
     late List<String> SP_TopicNames = [];
     return Scaffold(
         // backgroundColor: Color.fromARGB(255, 211, 212, 240),
-        body: SingleChildScrollView(
+    body: Stack(
+          children: [
+      SingleChildScrollView(
       child: Column(
         children: [
           Consumer(
@@ -494,7 +495,27 @@ class HomePage extends ConsumerWidget {
           )
         ],
       ),
-    ));
+      ),
+     /*(Positioned(
+        bottom: 16.0,
+        right: 16.0,
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            // Navigate to ChatPage when button is clicked
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatPage()),
+            );
+          },
+          label: const Text("Chat with us"),
+          icon: const Icon(Icons.chat),
+          backgroundColor: Colors.blueAccent, // Adjust color as needed
+        ),
+      ),*/
+      ChatButton()
+    ],
+  ),
+);
   }
 }
 

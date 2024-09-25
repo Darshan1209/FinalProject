@@ -1,8 +1,9 @@
 import 'package:apt3065/firebase_options.dart';
+import 'package:apt3065/gemini.dart';
+import 'package:apt3065/src/screens/auth_page.dart';
 import 'package:apt3065/src/screens/forgot_password.dart';
 import 'package:apt3065/src/screens/home_page.dart';
 import 'package:apt3065/src/screens/login.dart';
-import 'package:apt3065/src/screens/auth_page.dart';
 import 'package:apt3065/src/screens/physicsexperimentList.dart';
 import 'package:apt3065/src/screens/signup.dart';
 import 'package:apt3065/src/widgets/navigation_bar.dart';
@@ -10,13 +11,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/route_middleware.dart';
-import 'package:flutter/services.dart';
 
 Future<void> main() async {
+  Gemini.init(apiKey: GEMINI_API_KEY,
+  );
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -39,7 +42,7 @@ class MyApp extends ConsumerWidget {
     // );
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'StudyApp',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,

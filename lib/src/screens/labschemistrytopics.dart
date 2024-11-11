@@ -1,66 +1,83 @@
 import 'package:apt3065/src/screens/chemistry_labspage.dart';
 import 'package:flutter/material.dart';
 
-
 class LabsChemistryTopicsPage extends StatelessWidget {
+  const LabsChemistryTopicsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chemistry Lab Topics'),
+        title: const Text('Chemistry Lab Topics'),
       ),
-      backgroundColor: Colors.blue, // Set background color to blue
+      backgroundColor: Colors.white, // Set background color to blue
       body: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: <Widget>[
             Card(
-              color: Color.fromARGB(255, 151, 222, 255), // Custom color for the card
+              color: const Color.fromARGB(
+                  255, 151, 222, 255), // Custom color for the card
               child: ListTile(
-                title: Text('Gas Laws'),
+                title: const Text('Gas Laws',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 1 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 151, 222, 255), // Custom color for the card
+              color: const Color.fromARGB(
+                  255, 151, 222, 255), // Custom color for the card
               child: ListTile(
-                title: Text('Crystallization'),
+                title: const Text('Crystallization',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 2 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 151, 222, 255), // Custom color for the card
+              color: const Color.fromARGB(
+                  255, 151, 222, 255), // Custom color for the card
               child: ListTile(
-                title: Text('Diffusion Experiment'),
+                title: const Text('Diffusion Experiment',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChemistryLabsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => ChemistryLabsPage()),
                   );
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 151, 222, 255), // Custom color for the card
+              color: const Color.fromARGB(
+                  255, 151, 222, 255), // Custom color for the card
               child: ListTile(
-                title: Text('Rate of Reaction'),
+                title: const Text('Rate of Reaction',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 4 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 151, 222, 255), // Custom color for the card
+              color: const Color.fromARGB(
+                  255, 151, 222, 255), // Custom color for the card
               child: ListTile(
-                title: Text('Calorimetry'),
+                title: const Text('Calorimetry',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 5 page
                 },

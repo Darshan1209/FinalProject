@@ -3,6 +3,7 @@ import 'package:apt3065/src/screens/labs_page.dart';
 import 'package:apt3065/src/screens/notes_page.dart';
 import 'package:apt3065/src/screens/videos_page.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'chemistry_notespage.dart';
 import 'chemistry_labspage.dart';
 import 'chemistry_videospage.dart';
@@ -12,7 +13,7 @@ class ChemistryExperimentsList extends StatefulWidget {
   const ChemistryExperimentsList({Key? key}) : super(key: key);
 
   @override
-  _ChemistryExperimentsListState createState() =>
+  State<ChemistryExperimentsList> createState() =>
       _ChemistryExperimentsListState();
 }
 
@@ -29,9 +30,9 @@ class _ChemistryExperimentsListState extends State<ChemistryExperimentsList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chemistry Experiments'),
+        title: const Text('Chemistry Experiments'),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(100.0),
+          preferredSize: const Size.fromHeight(100.0),
           child: _buildTabs(),
         ),
       ),
@@ -43,8 +44,8 @@ class _ChemistryExperimentsListState extends State<ChemistryExperimentsList> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildTabButton('Notes', Icons.note),
-        _buildTabButton('Videos', Icons.video_library),
+        _buildTabButton('Note', Icons.note),
+        _buildTabButton('Video', Iconsax.video),
         _buildTabButton('Labs', Icons.science),
       ],
     );
@@ -89,9 +90,9 @@ class _ChemistryExperimentsListState extends State<ChemistryExperimentsList> {
       case 'Notes':
         return ChemistryNotesPage();
       case 'Videos':
-        return ChemistryVideosPage();
+        return const ChemistryVideosPage();
       case 'Labs':
-        return BiologyLabsPageRedirect();
+        return const BiologyLabsPageRedirect();
       default:
         return Container(); // Handle other cases if needed
     }

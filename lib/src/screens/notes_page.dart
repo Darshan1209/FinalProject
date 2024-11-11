@@ -17,10 +17,6 @@ class _BiologyNotesPageState extends State<BiologyNotesPage> {
     final ScrollController _scrollController = ScrollController();
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Container(),
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(14.0),
         child: Consumer(

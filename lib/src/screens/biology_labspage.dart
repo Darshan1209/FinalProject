@@ -1,27 +1,46 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
+class AcidBaseLabsPage extends StatefulWidget {
+  const AcidBaseLabsPage({super.key});
 
-class BiologyLabsPage extends StatefulWidget {
   @override
   _BouncingBallsScreenState createState() => _BouncingBallsScreenState();
 }
 
-class _BouncingBallsScreenState extends State<BiologyLabsPage> {
+class _BouncingBallsScreenState extends State<AcidBaseLabsPage> {
   late Timer timer;
   final List<Ball> balls = [];
   final int numAcidBalls = 10;
   final int numBaseBalls = 2;
 
   bool showResultants = false;
+  FlutterTts flutterTts = FlutterTts(); // TTS instance
 
   @override
   void initState() {
     super.initState();
     initializeAcidBalls();
     startSimulation();
+    _words = _experimentExplanation.split(' ');
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        _currentWordIndex = 0; // Reset once the reading is complete
+        _isSpeaking = false;
+      });
+    });
+
+    flutterTts
+        .setProgressHandler((String text, int start, int end, String word) {
+      setState(() {
+        _currentWordIndex = _words.indexWhere((w) => w.contains(word));
+      });
+    });
   }
 
   @override
@@ -54,8 +73,35 @@ class _BouncingBallsScreenState extends State<BiologyLabsPage> {
     }
   }
 
+  String _experimentExplanation = """
+ This experiment simulates an acid-base reaction. When HCl, a strong acid, reacts with NaOH, a strong base, they neutralize each other to form water (H₂O) and salt (NaCl).The presence of H+ ions (acid) and OH- ions (base) initially represents the reactants. 
+After the reaction, the resultant products shown are water molecules and sodium chloride.
+""";
+  int _currentWordIndex = 0;
+  List<String> _words = [];
+  bool _isSpeaking = false;
+
+  Future _speak() async {
+    if (_isSpeaking) {
+      // Stop the reading if it's already in progress
+      await flutterTts.stop();
+      setState(() {
+        _isSpeaking = false;
+        _currentWordIndex = 0; // Reset the index when stopping
+      });
+    } else {
+      // Start reading if TTS is not currently active
+      setState(() {
+        _isSpeaking = true;
+      });
+      await flutterTts.setLanguage("en-US");
+      await flutterTts.setSpeechRate(0.4);
+      await flutterTts.speak(_experimentExplanation);
+    }
+  }
+
   void startSimulation() {
-    timer = Timer.periodic(Duration(milliseconds: 16), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
       setState(() {
         for (var ball in balls) {
           ball.move();
@@ -88,7 +134,7 @@ class _BouncingBallsScreenState extends State<BiologyLabsPage> {
         isNaPlus = !isNaPlus;
       }
     });
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         showResultants = true;
         initializeResultBalls();
@@ -98,98 +144,98 @@ class _BouncingBallsScreenState extends State<BiologyLabsPage> {
   }
   //
 
-
   void initializeResultBalls() {
     balls.clear();
     balls.addAll([
       Ball(
-        position: Offset(100, 50),
-        velocity: Offset(0, 1),
+        position: const Offset(100, 50),
+        velocity: const Offset(0, 1),
         radius: 20,
         color: Colors.orangeAccent, // H2+ with increased intensity
         text: "H2+",
       ),
       Ball(
-        position: Offset(200, 50),
-        velocity: Offset(-1, -1),
+        position: const Offset(200, 50),
+        velocity: const Offset(-1, -1),
         radius: 20,
         color: Colors.blue, // Cl-
         text: "Cl-",
       ),
       Ball(
-        position: Offset(100, 150),
-        velocity: Offset(1, -1),
+        position: const Offset(100, 150),
+        velocity: const Offset(1, -1),
         radius: 20,
         color: Colors.red, // O- with a different color
         text: "O-",
       ),
       Ball(
-        position: Offset(200, 150),
-        velocity: Offset(-1, 1),
+        position: const Offset(200, 150),
+        velocity: const Offset(-1, 1),
         radius: 20,
         color: Colors.yellow, // Na+
         text: "Na+",
       ),
       Ball(
-        position: Offset(100, 50),
-        velocity: Offset(0, 1),
+        position: const Offset(100, 50),
+        velocity: const Offset(0, 1),
         radius: 20,
         color: Colors.orangeAccent, // H2+ with increased intensity
         text: "H2+",
       ),
       Ball(
-        position: Offset(200, 50),
-        velocity: Offset(-1, -1),
+        position: const Offset(200, 50),
+        velocity: const Offset(-1, -1),
         radius: 20,
         color: Colors.blue, // Cl-
         text: "Cl-",
       ),
       Ball(
-        position: Offset(100, 150),
-        velocity: Offset(1, -1),
+        position: const Offset(100, 150),
+        velocity: const Offset(1, -1),
         radius: 20,
         color: Colors.red, // O- with a different color
         text: "O-",
       ),
       Ball(
-        position: Offset(200, 150),
-        velocity: Offset(-1, 1),
+        position: const Offset(200, 150),
+        velocity: const Offset(-1, 1),
         radius: 20,
         color: Colors.yellow, // Na+
         text: "Na+",
       ),
       Ball(
-        position: Offset(100, 50),
-        velocity: Offset(0, 1),
+        position: const Offset(100, 50),
+        velocity: const Offset(0, 1),
         radius: 20,
         color: Colors.orangeAccent, // H2+ with increased intensity
         text: "H2+",
       ),
       Ball(
-        position: Offset(200, 50),
-        velocity: Offset(-1, -1),
+        position: const Offset(200, 50),
+        velocity: const Offset(-1, -1),
         radius: 20,
         color: Colors.blue, // Cl-
         text: "Cl-",
       ),
       Ball(
-        position: Offset(100, 150),
-        velocity: Offset(1, -1),
+        position: const Offset(100, 150),
+        velocity: const Offset(1, -1),
         radius: 20,
         color: Colors.red, // O- with a different color
         text: "O-",
       ),
       Ball(
-        position: Offset(200, 150),
-        velocity: Offset(-1, 1),
+        position: const Offset(200, 150),
+        velocity: const Offset(-1, 1),
         radius: 20,
         color: Colors.yellow, // Na+
         text: "Na+",
       ),
     ]);
   }
+
   void startResultantSimulation() {
-    timer = Timer.periodic(Duration(milliseconds: 16), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
       setState(() {
         for (var ball in balls) {
           ball.move();
@@ -203,94 +249,141 @@ class _BouncingBallsScreenState extends State<BiologyLabsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('AcidBase Experiment'),
+        title: const Text('AcidBase Experiment'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 300,
-              height: 200,
-              decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(width: 2.0, color: Colors.black),
-                  right: BorderSide(width: 2.0, color: Colors.black),
-                  bottom: BorderSide(width: 2.0, color: Colors.black),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 300,
+                height: 200,
+                decoration: const BoxDecoration(
+                  border: Border(
+                    left: BorderSide(width: 2.0, color: Colors.black),
+                    right: BorderSide(width: 2.0, color: Colors.black),
+                    bottom: BorderSide(width: 2.0, color: Colors.black),
+                  ),
                 ),
-              ),
-              child: Stack(
-                children: [
-                  LiquidContainer(showResultants: showResultants),
-                  Stack(
-                    children: balls.map((ball) {
-                      return Positioned(
-                        left: ball.position.dx - ball.radius,
-                        top: ball.position.dy - ball.radius,
-                        child: Container(
-                          width: ball.radius * 2,
-                          height: ball.radius * 2,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: ball.color,
-                          ),
-                          child: Center(
-                            child: Text(
-                              ball.text,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                child: Stack(
+                  children: [
+                    LiquidContainer(showResultants: showResultants),
+                    Stack(
+                      children: balls.map((ball) {
+                        return Positioned(
+                          left: ball.position.dx - ball.radius,
+                          top: ball.position.dy - ball.radius,
+                          child: Container(
+                            width: ball.radius * 2,
+                            height: ball.radius * 2,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: ball.color,
+                            ),
+                            child: Center(
+                              child: Text(
+                                ball.text,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              FloatingActionButton.extended(
+                onPressed: () {
+                  if (showResultants) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Invalid action"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    // Your existing logic for when the results are not shown
+                    addBase();
+                  }
+                },
+                tooltip: 'Add Base',
+                icon: const Icon(Icons.add),
+                label: const Text('Add Base'), // This is where you add the text
+              ),
+              Column(
+                children: [
+                  if (!showResultants) // Display the first text if showResultants is false
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          top: 70.0), // Adjust the padding as needed
+                      child: Text(
+                        'HCl (Acid) + NaOH (Base)',
+                        style: TextStyle(
+                            fontSize: 30), // Increase the font size here
+                      ),
+                    ),
+                  if (showResultants) // Conditionally display the result text
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          top: 70.0), // Adjust the padding as needed
+                      child: Text(
+                        'H2O + NaCl + H2',
+                        style: TextStyle(
+                            fontSize: 30), // Increase the font size here
+                      ),
+                    ),
                 ],
               ),
-            ),
-            SizedBox(height: 20),
-            FloatingActionButton.extended(
-              onPressed: () {
-                if (showResultants) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Invalid action"),
-                      duration: Duration(seconds: 2),
+              Text(
+                'Experiment Explanation',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: _speak,
+                      icon: Icon(
+                          _isSpeaking ? Iconsax.stop : Iconsax.volume_high),
                     ),
-                  );
-                } else {
-                  // Your existing logic for when the results are not shown
-                  addBase();
-                }
-              },
-              tooltip: 'Add Base',
-              icon: Icon(Icons.add),
-              label: Text('Add Base'), // This is where you add the text
-            ),
-            Column(
-              children: [
-                if (!showResultants) // Display the first text if showResultants is false
-                  Padding(
-                    padding: EdgeInsets.only(top: 70.0), // Adjust the padding as needed
-                    child: Text(
-                      'HCl (Acid) + NaOH (Base)',
-                      style: TextStyle(fontSize: 30), // Increase the font size here
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0, bottom: 50),
+                        child: RichText(
+                          textAlign: TextAlign.justify,
+                          text: TextSpan(
+                            children: _words.asMap().entries.map((entry) {
+                              int idx = entry.key;
+                              String word = entry.value;
+                              return TextSpan(
+                                text: "$word ",
+                                style: TextStyle(
+                                  fontFamily: 'Balsamiq Sans',
+                                  color: idx <= _currentWordIndex
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  fontSize: 18,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                if (showResultants) // Conditionally display the result text
-                  Padding(
-                    padding: EdgeInsets.only(top: 70.0), // Adjust the padding as needed
-                    child: Text(
-                      'H2O + NaCl + H2',
-                      style: TextStyle(fontSize: 30), // Increase the font size here
-                    ),
-                  ),
-              ],
-            ),
-
-          ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -344,7 +437,7 @@ class _LiquidContainerState extends State<LiquidContainer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
   }
 
@@ -360,10 +453,12 @@ class _LiquidContainerState extends State<LiquidContainer>
       animation: _controller,
       builder: (context, child) {
         return CustomPaint(
-          size: Size(300, 200),
+          size: const Size(300, 200),
           painter: LiquidPainter(
             waveOffset: _controller.value,
-            color: widget.showResultants ? Colors.lightBlueAccent : Colors.redAccent,
+            color: widget.showResultants
+                ? Colors.lightBlueAccent
+                : Colors.redAccent,
           ),
         );
       },
@@ -385,9 +480,15 @@ class LiquidPainter extends CustomPainter {
 
     final path = Path()
       ..moveTo(0, 0)
-      ..quadraticBezierTo(size.width / 4 + 50 * sin(waveOffset * 2 * pi), 50 + 20 * sin(waveOffset * 2 * pi), size.width / 2,
+      ..quadraticBezierTo(
+          size.width / 4 + 50 * sin(waveOffset * 2 * pi),
+          50 + 20 * sin(waveOffset * 2 * pi),
+          size.width / 2,
           25 + 20 * sin(waveOffset * 2 * pi))
-      ..quadraticBezierTo(size.width * 3 / 4 + 50 * sin(waveOffset * 2 * pi), 50 + 20 * sin(waveOffset * 2 * pi), size.width,
+      ..quadraticBezierTo(
+          size.width * 3 / 4 + 50 * sin(waveOffset * 2 * pi),
+          50 + 20 * sin(waveOffset * 2 * pi),
+          size.width,
           25 + 20 * sin(waveOffset * 2 * pi))
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)

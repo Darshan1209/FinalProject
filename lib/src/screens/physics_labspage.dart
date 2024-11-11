@@ -3,21 +3,39 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:chart_sparkline/chart_sparkline.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:iconsax/iconsax.dart';
 
-class PhysicsLabsPage extends StatefulWidget {
+class PendulumPhysicsLabsPage extends StatefulWidget {
+  const PendulumPhysicsLabsPage({super.key});
+
   @override
   _PendulumExperimentState createState() => _PendulumExperimentState();
 }
 
-class _PendulumExperimentState extends State<PhysicsLabsPage>
+class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   double _pendulumLength = 100.0; // Initial length of the pendulum
   int _oscillationCount = 0; // Number of completed oscillations
-  List<double> _pendulumLengthData = [100.0]; // List to store pendulum length data
+  List<double> _pendulumLengthData = [
+    100.0
+  ]; // List to store pendulum length data
   List<double> _periodData = [0.0]; // List to store period data
   late Stopwatch _stopwatch; // Stopwatch for measuring period
   late Timer _timer;
+  final FlutterTts flutterTts = FlutterTts();
+
+  // Text-to-speech properties
+  String _experimentExplanation =
+      "This experiment demonstrates the oscillation of a simple pendulum, "
+      "showing the relationship between pendulum length and oscillation period. "
+      "The period increases as the length of the pendulum increases, "
+      "following the formula T equals 2 pi times the square root of length over gravity.";
+
+  int _currentWordIndex = 0;
+  List<String> _words = [];
+  bool _isSpeaking = false; // Track if TTS is currently speaking
 
   @override
   void initState() {
@@ -26,8 +44,24 @@ class _PendulumExperimentState extends State<PhysicsLabsPage>
       vsync: this,
       duration: Duration(seconds: 1),
     )..repeat(reverse: false);
-    _controller.addListener(_updateGraphs); // Listen for animation updates
+    _controller.addListener(_updateGraphs);
     _stopwatch = Stopwatch();
+
+    _words = _experimentExplanation.split(' '); // Split explanation into words
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        _currentWordIndex = 0; // Reset once the reading is complete
+        _isSpeaking = false;
+      });
+    });
+
+    flutterTts
+        .setProgressHandler((String text, int start, int end, String word) {
+      setState(() {
+        _currentWordIndex = _words.indexWhere((w) => w.contains(word));
+      });
+    });
   }
 
   @override
@@ -35,17 +69,15 @@ class _PendulumExperimentState extends State<PhysicsLabsPage>
     _controller.removeListener(_updateGraphs);
     _controller.dispose();
     _stopwatch.stop();
+    flutterTts.stop();
     super.dispose();
   }
 
   void _updateGraphs() {
     setState(() {
-      // _pendulumLengthData.add(_pendulumLength);
-      // _periodData.add(_stopwatch.elapsedMilliseconds / (_oscillationCount * 1000));
       _pendulumLengthData.add(_pendulumLength);
-      double period = calculatePeriod(_pendulumLength); // Calculate period using the length
+      double period = calculatePeriod(_pendulumLength);
       _periodData.add(period);
-
     });
   }
 
@@ -68,12 +100,28 @@ class _PendulumExperimentState extends State<PhysicsLabsPage>
   }
 
   double calculatePeriod(double length) {
-    // Assuming standard gravity of 9.81 m/s^2
     const double g = 9.81;
     return 2 * pi * sqrt(length / g);
   }
 
-
+  Future _speak() async {
+    if (_isSpeaking) {
+      // Stop the reading if it's already in progress
+      await flutterTts.stop();
+      setState(() {
+        _isSpeaking = false;
+        _currentWordIndex = 0; // Reset the index when stopping
+      });
+    } else {
+      // Start reading if TTS is not currently active
+      setState(() {
+        _isSpeaking = true;
+      });
+      await flutterTts.setLanguage("en-US");
+      await flutterTts.setSpeechRate(0.4);
+      await flutterTts.speak(_experimentExplanation);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,20 +129,19 @@ class _PendulumExperimentState extends State<PhysicsLabsPage>
       appBar: AppBar(
         title: Text('Pendulum Experiment'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return Container(
-                  width: 2.0,
-                  height: _pendulumLength,
-                  child: Transform.translate(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform.translate(
                     offset: Offset(0, 0),
                     child: Transform.rotate(
-                      angle: sin(_controller.value * pi * 2) * pi / 4, // Adjust the amplitude as needed
+                      angle: sin(_controller.value * pi * 2) * pi / 4,
                       child: Container(
                         width: 2.0,
                         height: _pendulumLength,
@@ -104,74 +151,117 @@ class _PendulumExperimentState extends State<PhysicsLabsPage>
                         ),
                       ),
                     ),
+                  );
+                },
+              ),
+              SizedBox(height: 50),
+              Slider(
+                value: _pendulumLength,
+                min: 50.0,
+                max: 200.0,
+                divisions: 30,
+                onChanged: (newValue) {
+                  setState(() {
+                    _pendulumLength = newValue;
+                  });
+                },
+                label: _pendulumLength.round().toString(),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: _startPendulum,
+                    child: Text('Start'),
                   ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            Slider(
-              value: _pendulumLength,
-              min: 50.0,
-              max: 200.0,
-              divisions: 30, // Adjust based on your preference for increments
-              onChanged: (newValue) {
-                setState(() {
-                  _pendulumLength = newValue;
-                });
-              },
-              label: _pendulumLength.round().toString(), // Display the current value of the slider as the label
-            ),
-
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _startPendulum();
-                  },
-                  child: Text('Start'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _stopPendulum();
-                  },
-                  child: Text('Stop'),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Sparkline(
-                data: _pendulumLengthData,
-                lineColor: Colors.blue,
-                lineWidth: 3.0, // Adjust the thickness as needed
+                  ElevatedButton(
+                    onPressed: _stopPendulum,
+                    child: Text('Stop'),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Sparkline(
-                data: _periodData,
-                lineColor: Colors.red,
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Sparkline(
+                  data: _pendulumLengthData,
+                  lineColor: Colors.blue,
+                  lineWidth: 3.0,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Length: ${(_pendulumLength.round() ~/ 5 * 5).toString()}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Period: ${(_periodData.isNotEmpty ? _periodData.last.toStringAsFixed(2) : '0.00')} seconds',
-              style: TextStyle(fontSize: 16),
-            ),
-
-            Text(
-              'Oscillation Count: $_oscillationCount',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Sparkline(
+                  data: _periodData,
+                  lineColor: Colors.red,
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Length: ${(_pendulumLength.round() ~/ 5 * 5).toString()}',
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Period: ${(_periodData.isNotEmpty ? _periodData.last.toStringAsFixed(2) : '0.00')} seconds',
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Oscillation Count: $_oscillationCount',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 50),
+              Text(
+                'Experiment Explanation',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: _speak,
+                      icon: Icon(
+                          _isSpeaking ? Iconsax.stop : Iconsax.volume_high),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0,
+                            bottom: 50), // Indent just for the first line
+                        child: RichText(
+                          textAlign: TextAlign.justify,
+                          text: TextSpan(
+                            children: _words.asMap().entries.map((entry) {
+                              int idx = entry.key;
+                              String word = entry.value;
+                              return TextSpan(
+                                text: "$word ",
+                                style: TextStyle(
+                                  fontFamily: 'Balsamiq Sans',
+                                  color: idx <= _currentWordIndex
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  fontSize: 18,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -194,4 +284,3 @@ class CirclePainter extends CustomPainter {
     return false;
   }
 }
-

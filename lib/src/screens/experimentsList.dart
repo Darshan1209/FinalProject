@@ -2,7 +2,9 @@ import 'package:apt3065/src/screens/chemistry_notespage.dart';
 import 'package:apt3065/src/screens/chemistry_videospage.dart';
 import 'package:apt3065/src/screens/videos_page.dart';
 import 'package:apt3065/src/utils/consumers_helper.dart';
+import 'package:apt3065/src/utils/responsive_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'notes_page.dart';
 import 'videos_page.dart';
 import 'chemistry_labspage_redirect.dart';
@@ -14,7 +16,7 @@ class BiologyExperimentsList extends StatefulWidget {
       : super(key: key);
 
   @override
-  _BiologyExperimentsListState createState() => _BiologyExperimentsListState();
+  State<BiologyExperimentsList> createState() => _BiologyExperimentsListState();
 }
 
 class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
@@ -31,9 +33,13 @@ class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.topicName), //CHANGE THIS
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.white,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(100.0),
-          child: _buildTabs(),
+          preferredSize: const Size.fromHeight(100),
+          child: Container(
+              margin: EdgeInsets.only(bottom: 10), child: _buildTabs()),
         ),
       ),
       body: _buildTabContent(),
@@ -41,47 +47,107 @@ class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
   }
 
   Widget _buildTabs() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildTabButton('Notes', Icons.note),
-        _buildTabButton('Videos', Icons.video_library),
-        _buildTabButton('Labs', Icons.science),
-      ],
+    return Container(
+      margin: EdgeInsets.only(bottom: 0, top: 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildTabButton('Notes', Iconsax.note_2),
+          _buildTabButton('Videos', Iconsax.video),
+          _buildTabButton('Labs', const AssetImage('assets/images/beaker.png')),
+        ],
+      ),
     );
   }
 
-  Widget _buildTabButton(String tabName, IconData icon) {
-    return Column(
-      children: [
-        IconButton(
-          icon: Icon(icon),
-          onPressed: () {
-            setState(() {
-              selectedTab = tabName;
-            });
-          },
+  Widget _buildTabButton(String tabName, dynamic icon) {
+    final isSelected = selectedTab == tabName;
+    final width = MediaQuery.of(context).size.width;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedTab = tabName;
+        });
+      },
+      child: AnimatedContainer(
+        width: transformWidth(width, 100),
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blueAccent : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.transparent, width: 0.5),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.8),
+                    spreadRadius: 1,
+                    blurRadius: 15,
+                    offset: const Offset(2, 2),
+                  ),
+                  BoxShadow(
+                    color: Colors.white,
+                    spreadRadius: 1,
+                    blurRadius: 15,
+                    offset: const Offset(-3, -3),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    // inset: true,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey.shade400
+                        : Colors.black54,
+                    offset: const Offset(5, 5),
+                    blurRadius: 15,
+                    spreadRadius: 1,
+                  ),
+                  BoxShadow(
+                    // inset: true,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.white
+                        : Colors.grey.shade600,
+                    offset: const Offset(-3, -3),
+                    blurRadius: 15,
+                    spreadRadius: 1,
+                  )
+                ],
         ),
-        Text(
-          tabName,
-          style: TextStyle(
-            color: selectedTab == tabName ? Colors.blue : Colors.black,
-            fontWeight:
-                selectedTab == tabName ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        // Add a bottom border for the selected tab
-        if (selectedTab == tabName)
-          Container(
-            height: 2.0, // Adjust the height of the underline
-            width: 20.0, // Adjust the width of the underline
-            decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.circular(2.0), // Optional: for rounded corners
-              color: Colors.black, // Set the color of the underline
+        child: Column(
+          children: [
+            icon is AssetImage
+                ? ImageIcon(
+                    icon,
+                    size: 30,
+                    color: isSelected ? Colors.white : Colors.black54,
+                  )
+                : Icon(
+                    icon,
+                    size: 30,
+                    color: isSelected ? Colors.white : Colors.black54,
+                  ),
+            const SizedBox(height: 5),
+            Text(
+              tabName,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-      ],
+            if (isSelected)
+              Container(
+                margin: const EdgeInsets.only(top: 6),
+                height: 3,
+                width: 24,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:apt3065/src/screens/chat_page.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ChatButton extends StatelessWidget {
   @override
@@ -14,10 +15,9 @@ class ChatButton extends StatelessWidget {
             MaterialPageRoute(builder: (context) => ChatPage()),
           );
         },
-        label: const Text("Need help!""\nChat with us"),
-
-        icon: const Icon(Icons.chat),
-        backgroundColor: Colors.blueAccent,
+        label: const Text("Need help!" "\nChat with us"),
+        icon: const Icon(Iconsax.message5),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
     );
   }

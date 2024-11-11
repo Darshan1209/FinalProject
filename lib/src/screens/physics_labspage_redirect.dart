@@ -6,7 +6,6 @@ class PhysicsLabsPageRedirect extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         automaticallyImplyLeading: false, // Remove the back arrow
       ),
       body: Center(
@@ -17,7 +16,8 @@ class PhysicsLabsPageRedirect extends StatelessWidget {
               // Navigate to the experiment page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PhysicsLabsPage()),
+                MaterialPageRoute(
+                    builder: (context) => PendulumPhysicsLabsPage()),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -29,7 +29,8 @@ class PhysicsLabsPageRedirect extends StatelessWidget {
             ),
             child: Text(
               'Click to Navigate to Pendulum Lab',
-              style: TextStyle(fontSize: 20, color: Colors.white), // Text color and size
+              style: TextStyle(
+                  fontSize: 20, color: Colors.white), // Text color and size
             ),
           ),
         ),
@@ -37,4 +38,3 @@ class PhysicsLabsPageRedirect extends StatelessWidget {
     );
   }
 }
-

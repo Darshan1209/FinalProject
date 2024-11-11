@@ -20,3 +20,11 @@ class ResponsiveWidget extends StatelessWidget {
     });
   }
 }
+
+transformWidth(width, double w) {
+  return width * w / width;
+}
+
+transformHeight(height, double h) {
+  return height * h / height;
+}

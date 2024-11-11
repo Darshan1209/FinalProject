@@ -1,68 +1,92 @@
+import 'package:apt3065/src/screens/physicsLabs/projectileMotion.dart';
+import 'package:apt3065/src/screens/physicsLabs/thermalExpansionLab.dart';
 import 'package:apt3065/src/screens/physics_labspage.dart';
 import 'package:flutter/material.dart';
 
-
 class LabsPhysicsTopicsPage extends StatelessWidget {
+  const LabsPhysicsTopicsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Physics Labs Topics'),
+        title: const Text('Physics Labs Topics'),
       ),
-      backgroundColor: Color.fromARGB(255, 255, 126, 87), // Set background color to deep orange
+      backgroundColor: Colors.white, // Set background color to deep orange
       body: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: <Widget>[
             Card(
               color: Colors.orangeAccent, // Use a lighter shade of orange
               child: ListTile(
-                title: Text('Ohms Law'),
+                title: const Text('Ohms Law',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 1 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
               color: Colors.orangeAccent, // Use a lighter shade of orange
               child: ListTile(
-                title: Text('Newtons Law'),
+                title: const Text('Newtons Law',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 2 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
               color: Colors.orangeAccent, // Use a lighter shade of orange
               child: ListTile(
-                title: Text('Pendulum Experiment'),
+                title: const Text('Pendulum Experiment',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PhysicsLabsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const PendulumPhysicsLabsPage()),
                   );
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
               color: Colors.orangeAccent, // Use a lighter shade of orange
               child: ListTile(
-                title: Text('Refraction'),
+                title: const Text('Projectile Motion',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 4 page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProjectileMotionSimulator()),
+                  );
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
               color: Colors.orangeAccent, // Use a lighter shade of orange
               child: ListTile(
-                title: Text('Thermal Expansion'),
+                title: const Text('Thermal Expansion',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
                 onTap: () {
                   // Navigate to Topic 5 page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ThermalExpansionAnimation()),
+                  );
                 },
               ),
             ),

@@ -19,6 +19,8 @@ class BottomNavigation extends ConsumerWidget {
     ProfilePage(userId: FirebaseAuth.instance.currentUser!.uid),
   ];
 
+   BottomNavigation({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = ref.watch(selectedIndexProvider);

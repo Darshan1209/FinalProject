@@ -18,10 +18,11 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/route_middleware.dart';
 
 Future<void> main() async {
-  Gemini.init(apiKey: GEMINI_API_KEY,
+  Gemini.init(
+    apiKey: GEMINI_API_KEY,
   );
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark));
   await Firebase.initializeApp(
@@ -58,22 +59,10 @@ class MyApp extends ConsumerWidget {
         GetPage(
             name: '/PhysicsExperimentsList()',
             page: () => const PhysicsExperimentsList()),
-        // GetPage(
-        //     name: '/SideMenu',
-        //     page: () => const SideMenu(),
-        //     middlewares: [RouteGuard()]),
-        // GetPage(
-        //     name: '/BottomNavigation',
-        //     page: () => BottomNavigation(),
-        //     middlewares: [RouteGuard()]),
         GetPage(
             name: '/HomePage',
             page: () => const HomePage(),
             middlewares: [RouteGuard()]),
-        // GetPage(
-        //     name: '/UnderDevelopment',
-        //     page: () => const UnderDevelopment(),
-        //     middlewares: [RouteGuard()]),
       ],
     );
   }

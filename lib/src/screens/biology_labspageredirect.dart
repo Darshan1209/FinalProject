@@ -3,11 +3,12 @@ import 'chemistry_labspage.dart';
 import 'biology_labspage.dart';
 
 class BiologyLabsPageRedirect extends StatelessWidget {
+  const BiologyLabsPageRedirect({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         automaticallyImplyLeading: false, // Remove the back arrow
       ),
       body: Center(
@@ -18,7 +19,7 @@ class BiologyLabsPageRedirect extends StatelessWidget {
               // Navigate to the experiment page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BiologyLabsPage()),
+                MaterialPageRoute(builder: (context) => AcidBaseLabsPage()),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -28,9 +29,10 @@ class BiologyLabsPageRedirect extends StatelessWidget {
               ),
               minimumSize: Size(200, 60), // Set button size
             ),
-            child: Text(
+            child: const Text(
               'Click to Navigate to AcidBase Lab',
-              style: TextStyle(fontSize: 20, color: Colors.white), // Text color and size
+              style: TextStyle(
+                  fontSize: 20, color: Colors.white), // Text color and size
             ),
           ),
         ),
@@ -38,4 +40,3 @@ class BiologyLabsPageRedirect extends StatelessWidget {
     );
   }
 }
-

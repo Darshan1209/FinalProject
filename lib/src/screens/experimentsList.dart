@@ -39,7 +39,7 @@ class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(100),
           child: Container(
-              margin: EdgeInsets.only(bottom: 10), child: _buildTabs()),
+              margin: const EdgeInsets.only(bottom: 10), child: _buildTabs()),
         ),
       ),
       body: _buildTabContent(),
@@ -48,7 +48,7 @@ class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
 
   Widget _buildTabs() {
     return Container(
-      margin: EdgeInsets.only(bottom: 0, top: 0),
+      margin: const EdgeInsets.only(bottom: 0, top: 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -86,11 +86,11 @@ class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
                     blurRadius: 15,
                     offset: const Offset(2, 2),
                   ),
-                  BoxShadow(
+                  const BoxShadow(
                     color: Colors.white,
                     spreadRadius: 1,
                     blurRadius: 15,
-                    offset: const Offset(-3, -3),
+                    offset: Offset(-3, -3),
                   ),
                 ]
               : [

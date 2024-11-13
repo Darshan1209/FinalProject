@@ -7,86 +7,90 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ChatPage extends StatefulWidget {
-     const ChatPage({super.key});
+  const ChatPage({super.key});
 
- @override
- State<ChatPage> createState() => _ChatPageState();
+  @override
+  State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final Gemini gemini = Gemini.instance;
+  List<ChatMessage> messages = [];
 
- final Gemini gemini  = Gemini.instance;
- List<ChatMessage> messages = [];
-
- ChatUser currentUser = ChatUser(id: "0", firstName:"You");
- ChatUser geminiuser = ChatUser(
-  id: "1",
-  firstName: "Gemini",
-  profileImage: 
-  "https://th.bing.com/th/id/OIP.LKovMVMwkIQd0kopVZuqRwHaE8?rs=1&pid=ImgDetMain");
-
+  ChatUser currentUser = ChatUser(id: "0", firstName: "You");
+  ChatUser geminiuser = ChatUser(
+      id: "1",
+      firstName: "Gemini",
+      profileImage:
+          "https://th.bing.com/th/id/OIP.LKovMVMwkIQd0kopVZuqRwHaE8?rs=1&pid=ImgDetMain");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Chat with us"),
+        title: const Text("Gemini AI"),
       ),
-      body:_buildUI(),
+      body: _buildUI(),
     );
   }
 
   Widget _buildUI() {
     return DashChat(
-      inputOptions: InputOptions(trailing: [
-        IconButton(onPressed: _sendMediaMessage,
-         icon: const Icon(
-          Icons.image,
-          )
-          )
-      ]),
-      currentUser: currentUser, 
-      onSend: _sendMessage, 
-      messages: messages
-      );
+        inputOptions: InputOptions(trailing: [
+          IconButton(
+              onPressed: _sendMediaMessage,
+              icon: const Icon(
+                Icons.image,
+              ))
+        ]),
+        currentUser: currentUser,
+        onSend: _sendMessage,
+        messages: messages);
   }
 
   void _sendMessage(ChatMessage chatMessage) {
-    setState((){
+    setState(() {
       messages = [chatMessage, ...messages];
     });
     try {
       String question = chatMessage.text;
       List<Uint8List>? images;
       if (chatMessage.medias?.isNotEmpty ?? false) {
-        images = [File(chatMessage.medias!.first.url).readAsBytesSync(),
+        images = [
+          File(chatMessage.medias!.first.url).readAsBytesSync(),
         ];
       }
-      gemini.streamGenerateContent(question, images: images,).listen((event) {
+      gemini
+          .streamGenerateContent(
+        question,
+        images: images,
+      )
+          .listen((event) {
         ChatMessage? lastMessage = messages.firstOrNull;
-        if (lastMessage != null && lastMessage.user == geminiuser){
+        if (lastMessage != null && lastMessage.user == geminiuser) {
           lastMessage = messages.removeAt(0);
-           String response = event.content?.parts?.fold("", (previous, current) => "$previous ${current.text}") ??"";
+          String response = event.content?.parts?.fold(
+                  "", (previous, current) => "$previous ${current.text}") ??
+              "";
           lastMessage.text += response;
-          setState(() {
-            messages = [lastMessage!, ...messages];
-          },
+          setState(
+            () {
+              messages = [lastMessage!, ...messages];
+            },
           );
-        }else{
-          String response = event.content?.parts?.fold("", (previous, current) => "$previous ${current.text}") ??"";
+        } else {
+          String response = event.content?.parts?.fold(
+                  "", (previous, current) => "$previous ${current.text}") ??
+              "";
           ChatMessage message = ChatMessage(
-            user: geminiuser,
-            createdAt: DateTime.now(), 
-            text:response
-            );
-            setState(() {
-              messages = [message, ...messages];
-            });
+              user: geminiuser, createdAt: DateTime.now(), text: response);
+          setState(() {
+            messages = [message, ...messages];
+          });
         }
       });
-    }
-    catch (e) {
+    } catch (e) {
       print(e);
     }
   }
@@ -95,19 +99,21 @@ class _ChatPageState extends State<ChatPage> {
     ImagePicker picker = ImagePicker();
     XFile? file = await picker.pickImage(
       source: ImageSource.gallery,
-      );
-      if (file != null) {
-        ChatMessage chatMessage = ChatMessage(user: currentUser, createdAt: DateTime.now(), text: "Describe this picture and answer the question in the picture.", medias:[
-
-        ChatMedia(
-          url:file.path,
-          fileName: "",
-          type: MediaType.image,
-        )
-      ],
+    );
+    if (file != null) {
+      ChatMessage chatMessage = ChatMessage(
+        user: currentUser,
+        createdAt: DateTime.now(),
+        text: "Describe this picture and answer the question in the picture.",
+        medias: [
+          ChatMedia(
+            url: file.path,
+            fileName: "",
+            type: MediaType.image,
+          )
+        ],
       );
       _sendMessage(chatMessage);
-      }
-
+    }
   }
 }

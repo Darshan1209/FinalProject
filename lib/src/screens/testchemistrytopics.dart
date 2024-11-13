@@ -11,7 +11,7 @@ class TestChemistryTopicsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chemistry Quiz Topics'),
       ),
-      backgroundColor: Colors.blue, // Set background color to blue
+      backgroundColor: Colors.white, // Set background color to blue
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: ListView(

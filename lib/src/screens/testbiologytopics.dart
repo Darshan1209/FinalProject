@@ -1,43 +1,44 @@
 import 'package:apt3065/src/screens/BiologyQuiz.dart';
 import 'package:flutter/material.dart';
 
-
 class TestBiologyTopicsPage extends StatelessWidget {
+  const TestBiologyTopicsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Biology Quiz Topics'),
+        title: const Text('Biology Quiz Topics'),
       ),
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: <Widget>[
             Card(
-              color: Color.fromARGB(255, 181, 230, 126),
+              color: const Color.fromARGB(255, 181, 230, 126),
               child: ListTile(
-                title: Text('Excretion'),
+                title: const Text('Excretion'),
                 onTap: () {
                   // Navigate to Topic 1 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 181, 230, 126),
+              color: const Color.fromARGB(255, 181, 230, 126),
               child: ListTile(
-                title: Text('Respiration'),
+                title: const Text('Respiration'),
                 onTap: () {
                   // Navigate to Topic 2 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 181, 230, 126),
+              color: const Color.fromARGB(255, 181, 230, 126),
               child: ListTile(
-                title: Text('Cells'),
+                title: const Text('Cells'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -46,21 +47,21 @@ class TestBiologyTopicsPage extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 181, 230, 126),
+              color: const Color.fromARGB(255, 181, 230, 126),
               child: ListTile(
-                title: Text('Circulation System'),
+                title: const Text('Circulation System'),
                 onTap: () {
                   // Navigate to Topic 4 page
                 },
               ),
             ),
-            SizedBox(height: 10), // Add space between cards
+            const SizedBox(height: 10), // Add space between cards
             Card(
-              color: Color.fromARGB(255, 181, 230, 126),
+              color: const Color.fromARGB(255, 181, 230, 126),
               child: ListTile(
-                title: Text('Health'),
+                title: const Text('Health'),
                 onTap: () {
                   // Navigate to Topic 5 page
                 },

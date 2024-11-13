@@ -68,7 +68,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  video_player: ^2.1.12
   wave: ^0.2.2
   chart_sparkline: ^1.0.15+1
   flutter_sinusoidals_v2: ^0.2.3
@@ -91,6 +90,20 @@ flutter:
     - assets/sounds/hit_sound.mp3
     - assets/sounds/cannon.mp3
     - assets/images/beaker.png
+    - assets/images/3Dcell.png
+    - assets/images/periodicTable.png
+    - assets/images/photosynthesis.png
+    - assets/images/rocket.png
+    - assets/images/electricity.png
+    - assets/images/gravity.png
+    - assets/images/lawsOfMotion.png
+    - assets/images/pendulum.png
+    - assets/images/refraction.png
+
+
+
+    
+
 
 
   fonts: 

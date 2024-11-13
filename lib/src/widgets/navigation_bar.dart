@@ -1,3 +1,4 @@
+import 'package:apt3065/src/screens/chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +20,7 @@ class BottomNavigation extends ConsumerWidget {
     ProfilePage(userId: FirebaseAuth.instance.currentUser!.uid),
   ];
 
-   BottomNavigation({super.key});
+  BottomNavigation({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,8 +34,10 @@ class BottomNavigation extends ConsumerWidget {
         : GeneralAppColors.whiteColor;
     Color tabbgcolor = GeneralAppColors.whiteColor;
     return Scaffold(
-      body: Center(
-        child: pages[selectedIndex],
+      body: SafeArea(
+        child: Center(
+          child: pages[selectedIndex],
+        ),
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(top: 5),
@@ -92,6 +95,14 @@ class BottomNavigation extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ChatPage()));
+        },
+        child: Icon(Iconsax.message),
+        backgroundColor: GeneralAppColors.whiteColor,
       ),
     );
   }

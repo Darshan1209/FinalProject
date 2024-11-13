@@ -23,6 +23,9 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
   List<Particle> rightParticlesList = [];
   int updateIntervalMilliseconds = 50;
 
+  double containerWidth = 0;
+  double containerHeight = 0;
+
   @override
   void initState() {
     super.initState();
@@ -43,49 +46,61 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
     leftParticlesList = List.generate(
       leftParticles,
       (index) => Particle(
-        position: Offset(random.nextDouble() * 50, random.nextDouble() * 500),
-        velocity:
-            Offset(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1),
+        position:
+            Offset(0 + random.nextDouble() * 150, random.nextDouble() * 500),
+        velocity: Offset(random.nextDouble() * 2, random.nextDouble() * 2 - 1),
       ),
     );
     rightParticlesList = List.generate(
       rightParticles,
       (index) => Particle(
         position:
-            Offset(100 + random.nextDouble() * 50, random.nextDouble() * 500),
-        velocity:
-            Offset(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1),
+            Offset(200 + random.nextDouble() * 150, random.nextDouble() * 500),
+        velocity: Offset(random.nextDouble() * 2, random.nextDouble() * 2 - 1),
       ),
     );
   }
 
-  // Method to move particles and interact with the wall
   void _moveParticles(List<Particle> particles, bool isLeftSide) {
     for (int i = 0; i < particles.length; i++) {
       particles[i].position += particles[i].velocity;
 
-      // Collision with the left and right wall
-      if (particles[i].position.dx < 0 || particles[i].position.dx > 100) {
-        particles[i].velocity = Offset(
-            -particles[i].velocity.dx, particles[i].velocity.dy); // Reflect
+      // Boundary clamping
+      if (particles[i].position.dx < 0) {
+        particles[i].position = Offset(0, particles[i].position.dy);
+        particles[i].velocity =
+            Offset(-particles[i].velocity.dx, particles[i].velocity.dy);
+      } else if (particles[i].position.dx > containerWidth) {
+        particles[i].position =
+            Offset(containerWidth, particles[i].position.dy);
+        particles[i].velocity =
+            Offset(-particles[i].velocity.dx, particles[i].velocity.dy);
       }
 
-      // Collision with top and bottom
-      if (particles[i].position.dy < 0 || particles[i].position.dy > 550) {
-        particles[i].velocity = Offset(
-            particles[i].velocity.dx, -particles[i].velocity.dy); // Reflect
+      if (particles[i].position.dy < 0) {
+        particles[i].position = Offset(particles[i].position.dx, 0);
+        particles[i].velocity =
+            Offset(particles[i].velocity.dx, -particles[i].velocity.dy);
+      } else if (particles[i].position.dy > containerHeight) {
+        particles[i].position =
+            Offset(particles[i].position.dx, containerHeight);
+        particles[i].velocity =
+            Offset(particles[i].velocity.dx, -particles[i].velocity.dy);
       }
 
       // Reflect off the barrier if visible
       if (isBarrierVisible) {
-        if (isLeftSide && particles[i].position.dx > 50) {
-          particles[i].position = Offset(50, particles[i].position.dy);
-          particles[i].velocity = Offset(
-              -particles[i].velocity.dx, particles[i].velocity.dy); // Reflect
-        } else if (!isLeftSide && particles[i].position.dx < 50) {
-          particles[i].position = Offset(50, particles[i].position.dy);
-          particles[i].velocity = Offset(
-              -particles[i].velocity.dx, particles[i].velocity.dy); // Reflect
+        if (isLeftSide && particles[i].position.dx > containerWidth / 2) {
+          particles[i].position =
+              Offset(containerWidth / 2, particles[i].position.dy);
+          particles[i].velocity =
+              Offset(-particles[i].velocity.dx, particles[i].velocity.dy);
+        } else if (!isLeftSide &&
+            particles[i].position.dx < containerWidth / 2) {
+          particles[i].position =
+              Offset(containerWidth / 2, particles[i].position.dy);
+          particles[i].velocity =
+              Offset(-particles[i].velocity.dx, particles[i].velocity.dy);
         }
       }
     }
@@ -133,6 +148,9 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
 
   @override
   Widget build(BuildContext context) {
+    containerWidth = MediaQuery.of(context).size.width;
+    containerHeight = 500; // Fixed height for container
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Diffusion Simulation'),
@@ -140,7 +158,7 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
       body: Column(
         children: [
           Container(
-            height: 500,
+            height: containerHeight,
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Stack(
               children: [
@@ -151,8 +169,8 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
                 ),
                 ...leftParticlesList.map((particle) {
                   return Positioned(
-                    left: 100 + particle.position.dx,
-                    top: 50 + particle.position.dy,
+                    left: particle.position.dx,
+                    top: particle.position.dy,
                     child: Container(
                       width: 20,
                       height: 20,
@@ -165,8 +183,8 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
                 }).toList(),
                 ...rightParticlesList.map((particle) {
                   return Positioned(
-                    left: 150 + particle.position.dx,
-                    top: 50 + particle.position.dy,
+                    left: particle.position.dx,
+                    top: particle.position.dy,
                     child: Container(
                       width: 20,
                       height: 20,
@@ -179,7 +197,7 @@ class _DiffusionScreenState extends State<ChemistryLabsPage> {
                 }).toList(),
                 if (isBarrierVisible)
                   Positioned(
-                    left: MediaQuery.of(context).size.width / 2 - 1,
+                    left: containerWidth / 2 - 2,
                     top: 0,
                     bottom: 0,
                     width: 4,

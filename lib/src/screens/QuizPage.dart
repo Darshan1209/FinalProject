@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 class QuizPage extends StatefulWidget {
   final String subject;
 
-  QuizPage({required this.subject});
+  const QuizPage({super.key, required this.subject});
 
   @override
-  _QuizPageState createState() => _QuizPageState();
+  State<QuizPage> createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
@@ -54,7 +54,9 @@ class _QuizPageState extends State<QuizPage> {
         title: Text(widget.subject + ' Quiz'),
       ),
       body: _questions == null
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator until questions are loaded
+          ? Center(
+              child:
+                  CircularProgressIndicator()) // Show loading indicator until questions are loaded
           : ListView.builder(
               itemCount: _questions.length,
               itemBuilder: (context, index) {
@@ -89,7 +91,8 @@ class _QuizPageState extends State<QuizPage> {
       builder: (context) {
         return AlertDialog(
           title: Text('Quiz Result'),
-          content: Text('You got $correctAnswers out of ${_questions.length} questions correct.'),
+          content: Text(
+              'You got $correctAnswers out of ${_questions.length} questions correct.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -124,7 +127,7 @@ class QuestionWidget extends StatelessWidget {
   final Question question;
   final OnAnswerSelected onChanged;
 
-  QuestionWidget({required this.question, required this.onChanged});
+  const QuestionWidget({required this.question, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {

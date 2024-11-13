@@ -10,7 +10,7 @@ class PendulumPhysicsLabsPage extends StatefulWidget {
   const PendulumPhysicsLabsPage({super.key});
 
   @override
-  _PendulumExperimentState createState() => _PendulumExperimentState();
+  State<PendulumPhysicsLabsPage> createState() => _PendulumExperimentState();
 }
 
 class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
@@ -23,11 +23,11 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
   ]; // List to store pendulum length data
   List<double> _periodData = [0.0]; // List to store period data
   late Stopwatch _stopwatch; // Stopwatch for measuring period
-  late Timer _timer;
+  late Timer? _timer;
   final FlutterTts flutterTts = FlutterTts();
 
   // Text-to-speech properties
-  String _experimentExplanation =
+  final String _experimentExplanation =
       "This experiment demonstrates the oscillation of a simple pendulum, "
       "showing the relationship between pendulum length and oscillation period. "
       "The period increases as the length of the pendulum increases, "
@@ -42,7 +42,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: false);
     _controller.addListener(_updateGraphs);
     _stopwatch = Stopwatch();
@@ -85,7 +85,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
     _stopwatch.reset();
     _stopwatch.start();
     _oscillationCount = 0;
-    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (_stopwatch.isRunning) {
         setState(() {
           _oscillationCount++;
@@ -95,8 +95,13 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
   }
 
   void _stopPendulum() {
-    _stopwatch.stop();
-    _timer.cancel();
+    setState(() {
+      // Optional: Reset or update state if necessary
+      _stopwatch.stop(); // Stop the stopwatch to prevent time from continuing
+      _timer!
+          .cancel(); // Stop the timer to prevent further oscillation count updates
+      _oscillationCount = 0; // Optionally reset oscillation count on stop
+    });
   }
 
   double calculatePeriod(double length) {
@@ -127,7 +132,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pendulum Experiment'),
+        title: const Text('Pendulum Experiment'),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -139,7 +144,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
                 animation: _controller,
                 builder: (context, child) {
                   return Transform.translate(
-                    offset: Offset(0, 0),
+                    offset: const Offset(0, 0),
                     child: Transform.rotate(
                       angle: sin(_controller.value * pi * 2) * pi / 4,
                       child: Container(
@@ -154,7 +159,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
                   );
                 },
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Slider(
                 value: _pendulumLength,
                 min: 50.0,
@@ -167,21 +172,21 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
                 },
                 label: _pendulumLength.round().toString(),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed: _startPendulum,
-                    child: Text('Start'),
+                    child: const Text('Start'),
                   ),
                   ElevatedButton(
                     onPressed: _stopPendulum,
-                    child: Text('Stop'),
+                    child: const Text('Stop'),
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Sparkline(
@@ -190,7 +195,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
                   lineWidth: 3.0,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Sparkline(
@@ -198,28 +203,28 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
                   lineColor: Colors.red,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 'Length: ${(_pendulumLength.round() ~/ 5 * 5).toString()}',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
               Text(
                 'Period: ${(_periodData.isNotEmpty ? _periodData.last.toStringAsFixed(2) : '0.00')} seconds',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
               Text(
                 'Oscillation Count: $_oscillationCount',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 50),
-              Text(
+              const SizedBox(height: 50),
+              const Text(
                 'Experiment Explanation',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: Row(
@@ -259,7 +264,7 @@ class _PendulumExperimentState extends State<PendulumPhysicsLabsPage>
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),

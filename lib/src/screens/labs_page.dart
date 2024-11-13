@@ -4,19 +4,16 @@ import 'package:apt3065/src/screens/labsphysicstopics.dart';
 import 'package:apt3065/src/widgets/chatbutton.dart';
 import 'package:flutter/material.dart';
 
-
 class LabsPage extends StatelessWidget {
   const LabsPage({Key? key}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Labs'),
       ),
-      body: Stack(
-      children: [
-        Padding(
+      body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -34,7 +31,7 @@ class LabsPage extends StatelessWidget {
                 child: buildCard(
                   'Biology Labs',
                   Colors.green,
-                  'assets/images/biology_background.jpg',
+                  'assets/images/3Dcell.png',
                 ),
               ),
             ),
@@ -51,8 +48,8 @@ class LabsPage extends StatelessWidget {
                 },
                 child: buildCard(
                   'Chemistry Labs',
-                  Colors.blue,
-                  'assets/images/chemistry_background.jpg',
+                  Colors.white,
+                  'assets/images/periodicTable.png',
                 ),
               ),
             ),
@@ -69,21 +66,18 @@ class LabsPage extends StatelessWidget {
                 },
                 child: buildCard(
                   'Physics Labs',
-                  Colors.orange,
-                  'assets/images/physics_background.jpg',
+                  Colors.white,
+                  'assets/images/rocket.png',
                 ),
               ),
             ),
-          ], 
+          ],
         ),
-      ),
-      ChatButton()
-      ],
       ),
     );
   }
 
-    Card buildCard(String title, Color color, String imagePath) {
+  Card buildCard(String title, Color color, String imagePath) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -96,7 +90,8 @@ class LabsPage extends StatelessWidget {
           if (imagePath.isNotEmpty)
             Image.asset(
               imagePath,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
+              alignment: Alignment.centerRight,
             ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -104,12 +99,20 @@ class LabsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
+                Container(
+                  padding:
+                      EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

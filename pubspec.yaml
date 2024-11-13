@@ -99,6 +99,9 @@ flutter:
     - assets/images/lawsOfMotion.png
     - assets/images/pendulum.png
     - assets/images/refraction.png
+    - assets/images/biologyavatar.png
+    - assets/images/chemistryavatar.png
+    - assets/images/physicsavatar.png
 
 
 

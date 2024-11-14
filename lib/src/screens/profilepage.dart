@@ -17,13 +17,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User? _user; // Store user details
-  Map<String, dynamic>? _userData; // Store user data from Firestore
+  User? _user;
+  Map<String, dynamic>? _userData;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _eduLevelController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _getUserDetails(); // Fetch user details when the profile page initializes
+    _getUserDetails();
   }
 
   Future<void> _getUserDetails() async {
@@ -34,11 +38,13 @@ class _ProfilePageState extends State<ProfilePage> {
           _user = user;
         });
 
-        // Fetch user data from Firestore
         DocumentSnapshot userDoc = await firebaseFireStore.collection('userProfile').doc(user.uid).get();
         if (userDoc.exists) {
           setState(() {
-            _userData = userDoc.data() as Map<String, dynamic>?; // Update with user data
+            _userData = userDoc.data() as Map<String, dynamic>?;
+            _nameController.text = _userData?['name'] ?? '';
+            _eduLevelController.text = _userData?['eduLevel'] ?? '';
+            _phoneController.text = _userData?['phoneNum'] ?? '';
           });
         } else {
           print('No user data found in Firestore.');
@@ -46,6 +52,44 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       print('Error fetching user details: $e');
+    }
+  }
+
+  Future<void> _showSaveConfirmation() async {
+    final shouldSave = await Get.dialog<bool>(
+      AlertDialog(
+        title: Text("Save Changes"),
+        content: Text("Do you want to save the changes?"),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false), // Cancel
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true), // Confirm
+            child: Text("Save"),
+          ),
+        ],
+      ),
+    );
+    if (shouldSave == true) {
+      await _saveChanges();
+    }
+  }
+
+  Future<void> _saveChanges() async {
+    try {
+      await firebaseFireStore.collection('userProfile').doc(_user!.uid).update({
+        'name': _nameController.text,
+        'eduLevel': _eduLevelController.text,
+        'phoneNum': _phoneController.text,
+      });
+      Get.snackbar("Success", "Profile updated successfully!",
+          snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      print("Error updating profile: $e");
+      Get.snackbar("Error", "Failed to save changes. Please try again.",
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -73,12 +117,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> signOut() async {
     try {
-      print("Logging out");
       await firebaseAuth.signOut();
-      print("Logged Out");
       Get.offNamed('/LoginPage');
     } catch (e) {
-      print("Error logging out: $e");
       Get.snackbar("Error", "Failed to log out. Please try again.",
           snackPosition: SnackPosition.BOTTOM);
     }
@@ -93,11 +134,17 @@ class _ProfilePageState extends State<ProfilePage> {
           'Profile Page',
           style: TextStyle(color: Colors.white),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _showSaveConfirmation, // Save confirmation dialog
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: _user != null // Check if user details are available
+          child: _user != null
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -106,64 +153,95 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: CircleAvatar(
                         radius: 50,
                         backgroundImage: _userData?['imageLink'] != null
-                            ? NetworkImage(_userData!['imageLink']) // Use 'imageLink' here
+                            ? NetworkImage(_userData!['imageLink'])
                             : AssetImage('assets/images/profile_icon.png') as ImageProvider,
                       ),
                     ),
+                    SizedBox(height: 10),
+                    // Editable User Information
+                    _buildEditableCard('Name', _nameController),
+                    _buildEditableCard('Education Level', _eduLevelController),
+                    _buildEditableCard('Email', TextEditingController(text: _user!.email), readOnly: true),
+                    _buildEditableCard('Phone', _phoneController),
 
-                    SizedBox(height: 20),
-                    // User Information
-                    _buildDetailCard('Name', _userData?['name'] ?? 'N/A'),
-                    _buildDetailCard('Education Level', _userData?['eduLevel'] ?? 'N/A'), // Display education level
-                    _buildDetailCard('Email', _user!.email ?? 'N/A'),
-                    _buildDetailCard('Phone', _userData?['phoneNum'] ?? 'N/A'),
-                    
-                    Spacer(), // Add spacer to push sign out button to the bottom
-                    Center(child: _buildSignOutButton()), // Centered sign out button
+                    Spacer(),
+                    // Save and Sign Out Button Row
+                    _buildButtonRow(),
                   ],
                 )
-              : CircularProgressIndicator(), // Show a loading indicator while fetching user details
+              : CircularProgressIndicator(),
         ),
       ),
     );
   }
 
-  Widget _buildDetailCard(String label, String value) {
+  Widget _buildEditableCard(String label, TextEditingController controller, {bool readOnly = false}) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: EdgeInsets.symmetric(vertical: 5.0),
       elevation: 4.0,
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
         title: Text(
           label,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
         ),
-        subtitle: Text(
-          value,
+        subtitle: TextField(
+          controller: controller,
+          readOnly: readOnly,
+          decoration: InputDecoration(border: InputBorder.none),
           style: TextStyle(fontSize: 16.0),
         ),
       ),
     );
   }
 
-  Widget _buildSignOutButton() {
+  Widget _buildButtonRow() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: _showLogoutConfirmation,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: GeneralAppColors.mainColor, // Customize button color
-          padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        ),
-        child: Text(
-          'Sign out',
-          style: TextStyle(
-              fontSize: 15,
-              fontFamily: "Balsamiq Sans",
-              fontWeight: FontWeight.w600,
-              color: Color.fromARGB(255, 228, 228, 228)),
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // Save Button
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: ElevatedButton(
+              onPressed: _showSaveConfirmation, // Save confirmation dialog
+              style: ElevatedButton.styleFrom(
+                backgroundColor: GeneralAppColors.mainColor,
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+              child: Text(
+                'Save',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "Balsamiq Sans",
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white),
+              ),
+            ),
+          ),
+          // Sign Out Button
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: ElevatedButton(
+              onPressed: _showLogoutConfirmation,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: GeneralAppColors.mainColor,
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+              child: Text(
+                'Sign out',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "Balsamiq Sans",
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromARGB(255, 228, 228, 228)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

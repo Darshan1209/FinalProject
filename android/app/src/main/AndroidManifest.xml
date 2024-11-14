@@ -6,7 +6,7 @@
         </intent>
     </queries>
     <application
-        android:label="apt3065"
+        android:label="StudyApp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">

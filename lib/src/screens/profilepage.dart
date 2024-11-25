@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 
 FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
 FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -38,13 +39,19 @@ class _ProfilePageState extends State<ProfilePage> {
           _user = user;
         });
 
-        DocumentSnapshot userDoc = await firebaseFireStore.collection('userProfile').doc(user.uid).get();
+        DocumentSnapshot userDoc = await firebaseFireStore
+            .collection('userProfile')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           setState(() {
             _userData = userDoc.data() as Map<String, dynamic>?;
             _nameController.text = _userData?['name'] ?? '';
             _eduLevelController.text = _userData?['eduLevel'] ?? '';
-            _phoneController.text = _userData?['phoneNum'] ?? '';
+            _phoneController.text =
+                (_userData?['phoneNum']?.substring(3) != null
+                    ? "0" + _userData!['phoneNum']!.substring(3)
+                    : "0");
           });
         } else {
           print('No user data found in Firestore.');
@@ -58,16 +65,16 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showSaveConfirmation() async {
     final shouldSave = await Get.dialog<bool>(
       AlertDialog(
-        title: Text("Save Changes"),
-        content: Text("Do you want to save the changes?"),
+        title: const Text("Save Changes"),
+        content: const Text("Do you want to save the changes?"),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false), // Cancel
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
           ),
           TextButton(
             onPressed: () => Get.back(result: true), // Confirm
-            child: Text("Save"),
+            child: const Text("Save"),
           ),
         ],
       ),
@@ -96,16 +103,16 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showLogoutConfirmation() async {
     final shouldLogout = await Get.dialog<bool>(
       AlertDialog(
-        title: Text("Confirm Logout"),
-        content: Text("Are you sure you want to log out?"),
+        title: const Text("Confirm Logout"),
+        content: const Text("Are you sure you want to log out?"),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false), // Cancel
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
           ),
           TextButton(
             onPressed: () => Get.back(result: true), // Confirm
-            child: Text("Logout"),
+            child: const Text("Logout"),
           ),
         ],
       ),
@@ -130,66 +137,71 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: GeneralAppColors.mainColor,
-        title: Text(
+        title: const Text(
           'Profile Page',
           style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: Icon(
+              Iconsax.save_add,
+              color: Colors.white,
+            ),
             onPressed: _showSaveConfirmation, // Save confirmation dialog
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: _user != null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    // Profile Picture
-                    Center(
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: _userData?['imageLink'] != null
-                            ? NetworkImage(_userData!['imageLink'])
-                            : AssetImage('assets/images/profile_icon.png') as ImageProvider,
-                      ),
+      body: Center(
+        child: _user != null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // Profile Picture
+                  Center(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: _userData?['imageLink'] != null
+                          ? NetworkImage(_userData!['imageLink'])
+                          : const AssetImage('assets/images/profile_icon.png')
+                              as ImageProvider,
                     ),
-                    SizedBox(height: 10),
-                    // Editable User Information
-                    _buildEditableCard('Name', _nameController),
-                    _buildEditableCard('Education Level', _eduLevelController),
-                    _buildEditableCard('Email', TextEditingController(text: _user!.email), readOnly: true),
-                    _buildEditableCard('Phone', _phoneController),
+                  ),
+                  const SizedBox(height: 10),
+                  // Editable User Information
+                  _buildEditableCard('Name', _nameController),
+                  _buildEditableCard('Education Level', _eduLevelController),
+                  _buildEditableCard(
+                      'Email', TextEditingController(text: _user!.email),
+                      readOnly: true),
+                  _buildEditableCard('Phone', _phoneController),
 
-                    Spacer(),
-                    // Save and Sign Out Button Row
-                    _buildButtonRow(),
-                  ],
-                )
-              : CircularProgressIndicator(),
-        ),
+                  const Spacer(),
+                  // Save and Sign Out Button Row
+                  _buildButtonRow(),
+                ],
+              )
+            : const CircularProgressIndicator(),
       ),
     );
   }
 
-  Widget _buildEditableCard(String label, TextEditingController controller, {bool readOnly = false}) {
+  Widget _buildEditableCard(String label, TextEditingController controller,
+      {bool readOnly = false}) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 5.0),
+      margin: const EdgeInsets.symmetric(vertical: 5.0),
       elevation: 4.0,
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
         title: Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
         ),
         subtitle: TextField(
           controller: controller,
           readOnly: readOnly,
-          decoration: InputDecoration(border: InputBorder.none),
-          style: TextStyle(fontSize: 16.0),
+          decoration: const InputDecoration(border: InputBorder.none),
+          style: const TextStyle(fontSize: 16.0),
         ),
       ),
     );
@@ -208,10 +220,12 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: _showSaveConfirmation, // Save confirmation dialog
               style: ElevatedButton.styleFrom(
                 backgroundColor: GeneralAppColors.mainColor,
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 12.0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
               ),
-              child: Text(
+              child: const Text(
                 'Save',
                 style: TextStyle(
                     fontSize: 15,
@@ -228,10 +242,12 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: _showLogoutConfirmation,
               style: ElevatedButton.styleFrom(
                 backgroundColor: GeneralAppColors.mainColor,
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 12.0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
               ),
-              child: Text(
+              child: const Text(
                 'Sign out',
                 style: TextStyle(
                     fontSize: 15,

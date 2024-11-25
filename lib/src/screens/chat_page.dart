@@ -83,7 +83,8 @@ class _ChatPageState extends State<ChatPage> {
                           : Text(
                               message['text'],
                               style: TextStyle(
-                                color: isCurrentUser ? Colors.white : Colors.black,
+                                color:
+                                    isCurrentUser ? Colors.white : Colors.black,
                               ),
                             ),
                     ),
@@ -106,8 +107,12 @@ class _ChatPageState extends State<ChatPage> {
           return TextSpan(
             text: words[index] + " ",
             style: TextStyle(
-              color: index == highlightedWordIndex ? const Color.fromARGB(255, 48, 89, 193) : Colors.black,
-              fontWeight: index == highlightedWordIndex ? FontWeight.bold : FontWeight.normal,
+              color: index == highlightedWordIndex
+                  ? const Color.fromARGB(255, 48, 89, 193)
+                  : Colors.black,
+              fontWeight: index == highlightedWordIndex
+                  ? FontWeight.bold
+                  : FontWeight.normal,
             ),
           );
         }),
@@ -157,7 +162,9 @@ class _ChatPageState extends State<ChatPage> {
     try {
       String fullResponse = "";
       gemini.streamGenerateContent(question).listen((event) {
-        final part = event.content?.parts?.fold("", (prev, current) => "$prev ${current.text}") ?? "";
+        final part = event.content?.parts
+                ?.fold("", (prev, current) => "$prev ${current.text}") ??
+            "";
         fullResponse += part;
       }, onDone: () {
         final geminiMessage = {
@@ -204,7 +211,9 @@ class _ChatPageState extends State<ChatPage> {
           "Describe this picture.",
           images: [imageBytes],
         ).listen((event) {
-          final part = event.content?.parts?.fold("", (prev, current) => "$prev ${current.text}") ?? "";
+          final part = event.content?.parts
+                  ?.fold("", (prev, current) => "$prev ${current.text}") ??
+              "";
           fullResponse += part;
         }, onDone: () {
           final geminiMessage = {
@@ -246,7 +255,8 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {
           highlightedWordIndex = i;
         });
-        await Future.delayed(const Duration(milliseconds: 800)); // Adjust timing based on speech rate
+        await Future.delayed(const Duration(
+            milliseconds: 800)); // Adjust timing based on speech rate
       }
 
       setState(() {

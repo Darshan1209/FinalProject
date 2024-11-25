@@ -30,7 +30,8 @@ class _PhysicsWavesQuizState extends State<PhysicsWavesQuiz> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Quiz Results"),
-          content: Text("You got $_totalCorrect out of ${_questions.length} questions correct."),
+          content: Text(
+              "You got $_totalCorrect out of ${_questions.length} questions correct."),
           actions: [
             TextButton(
               onPressed: () {
@@ -40,7 +41,10 @@ class _PhysicsWavesQuizState extends State<PhysicsWavesQuiz> {
                   _answers = {};
                 });
               },
-              child: Text("Close"),
+              child: Text(
+                "Close",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -49,44 +53,47 @@ class _PhysicsWavesQuizState extends State<PhysicsWavesQuiz> {
   }
 
   final Map<String, List<String>> _questions = {
-    "1. Which type of wave requires a medium for propagation?": [
-      "Transverse wave",
-      "Longitudinal wave ",
-      "Electromagnetic wave",
-      "Standing wave"
+    "1. Which of Newton's laws explains the concept of inertia?": [
+      "First law",
+      "Second law",
+      "Third law",
+      "Universal law of gravitation"
     ],
-    "2. What property of a wave determines its loudness?": [
-      "Frequency",
-      "Amplitude ",
-      "Wavelength",
-      "Speed"
+    "2. What is the formula stated by Newton's second law of motion?": [
+      "F = ma",
+      "F = G(m₁m₂/r²)",
+      "v = u + at",
+      "P = mv"
     ],
-    "3. Which type of wave exhibits a particle motion parallel to the direction of wave propagation?": [
-      "Sound wave",
-      "Light wave",
-      "Longitudinal wave ",
-      "Transverse wave"
+    "3. What is the action-reaction pair according to Newton's third law?": [
+      "Equal in magnitude, opposite in direction",
+      "Equal in magnitude, same in direction",
+      "Proportional to mass",
+      "Independent of direction"
     ],
-    "4. What is the phenomenon where two waves combine to form a new wave with a larger amplitude called?": [
-      "Reflection",
-      "Diffraction",
-      "Interference",
-      "Refraction"
+    "4. What is the net force acting on an object in uniform motion?": [
+      "Greater than zero",
+      "Less than zero",
+      "Zero",
+      "Depends on the mass of the object"
     ],
-    "5. What property of a wave determines its pitch?": [
-      "Amplitude",
-      "Frequency",
-      "Wavelength",
-      "Speed"
+    "5. What does Newton's first law of motion state about a body at rest?": [
+      "It will move with constant acceleration",
+      "It will remain at rest unless acted upon by an external force",
+      "It will come to rest eventually",
+      "It will gain velocity over time"
     ],
   };
 
   final Map<String, String> _correctAnswers = {
-    "Which type of wave requires a medium for propagation?": "Longitudinal wave (Correct Answer)",
-    "What property of a wave determines its loudness?": "Amplitude (Correct Answer)",
-    "Which type of wave exhibits a particle motion parallel to the direction of wave propagation?": "Longitudinal wave (Correct Answer)",
-    "What is the phenomenon where two waves combine to form a new wave with a larger amplitude called?": "Interference (Correct Answer)",
-    "What property of a wave determines its pitch?": "Frequency (Correct Answer)",
+    "1. Which of Newton's laws explains the concept of inertia?": "First law ",
+    "2. What is the formula stated by Newton's second law of motion?":
+        "F = ma ",
+    "3. What is the action-reaction pair according to Newton's third law?":
+        "Equal in magnitude, opposite in direction ",
+    "4. What is the net force acting on an object in uniform motion?": "Zero ",
+    "5. What does Newton's first law of motion state about a body at rest?":
+        "It will remain at rest unless acted upon by an external force ",
   };
 
   @override
@@ -95,14 +102,13 @@ class _PhysicsWavesQuizState extends State<PhysicsWavesQuiz> {
       appBar: AppBar(
         title: Text("Physics Waves Quiz"),
       ),
-      backgroundColor: Colors.orange.shade400, // Darker shade of orange
       body: SingleChildScrollView(
         child: Column(
           children: _questions.keys.map((question) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
-                color: Colors.orange.shade200, // Lighter shade of orange
+                color: Colors.grey[300], // Lighter shade of orange
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -110,14 +116,17 @@ class _PhysicsWavesQuizState extends State<PhysicsWavesQuiz> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         question,
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // Text color black
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black), // Text color black
                       ),
                     ),
                     ..._questions[question]!.map((option) {
                       return RadioListTile(
                         title: Text(
                           option,
-                          style: TextStyle(color: Colors.black), // Text color black
+                          style: TextStyle(
+                              color: Colors.black), // Text color black
                         ),
                         groupValue: _answers[question],
                         value: option,
@@ -137,7 +146,8 @@ class _PhysicsWavesQuizState extends State<PhysicsWavesQuiz> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _submitQuiz,
-        label: Text("Submit", style: TextStyle(color: Colors.white)), // Text color white
+        label: Text("Submit",
+            style: TextStyle(color: Colors.white)), // Text color white
         backgroundColor: Colors.orange.shade900, // Darker shade of orange
       ),
     );

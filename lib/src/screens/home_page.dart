@@ -1,5 +1,8 @@
 import 'package:apt3065/src/constants/colors.dart';
+import 'package:apt3065/src/screens/UserListPage.dart';
+import 'package:apt3065/src/screens/chat_page.dart';
 import 'package:apt3065/src/screens/experimentsList.dart';
+import 'package:apt3065/src/screens/messagingPage.dart';
 import 'package:apt3065/src/screens/topicsListPage.dart';
 import 'package:apt3065/src/utils/consumers_helper.dart';
 import 'package:apt3065/src/widgets/chatbutton.dart';
@@ -43,7 +46,10 @@ class HomePage extends ConsumerWidget {
                                     children: [
                                       CachedNetworkImage(
                                         alignment: Alignment.topLeft,
-                                        imageUrl: currentUserData['imageLink'],
+                                        imageUrl:
+                                            currentUserData['imageLink'] != null
+                                                ? currentUserData['imageLink']
+                                                : 'assets/images/profile.png',
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 CircleAvatar(
@@ -87,9 +93,16 @@ class HomePage extends ConsumerWidget {
                                             const EdgeInsets.only(right: 20),
                                         // color: Colors.amber,
                                         child: IconButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        UserListPage()));
+                                          },
                                           icon: const Icon(
-                                            Iconsax.notification,
+                                            Iconsax.message,
+                                            color: Colors.blue,
                                           ),
                                         ),
                                       )

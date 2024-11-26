@@ -40,6 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
     'Class 12',
     'Diploma',
     'University',
+    'Instructor'
   ]; // List of available classes
 
   bool isLoading = false;

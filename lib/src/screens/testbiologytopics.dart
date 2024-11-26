@@ -26,7 +26,7 @@ class TestBiologyTopicsPage extends StatelessWidget {
       'Photosynthesis'
     ];
     List<Widget> labs = [
-      QuizFlashCard(),
+      BiologyQuiz(),
       BiologyQuiz(),
       BiologyQuiz(),
       BiologyQuiz(),

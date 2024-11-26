@@ -1,4 +1,5 @@
 import 'package:apt3065/src/screens/ChemistryTitrationQuiz';
+import 'package:apt3065/src/screens/QuizPage.dart';
 import 'package:apt3065/src/screens/chemistryTitrationQuiz.dart';
 import 'package:apt3065/src/widgets/labCards.dart';
 import 'package:flutter/material.dart';
@@ -19,15 +20,15 @@ class TestChemistryTopicsPage extends StatelessWidget {
 
     List<String> titles = [
       'Gas Laws',
-      'Chemical Bonding',
+      'Titration',
       'Diffusion Experiment',
       'Acid-Base Reactions',
       'Periodic Table',
       'Atomic Structure'
     ];
     List<Widget> labs = [
-      const ChemistryTitrationQuiz(),
-      const ChemistryTitrationQuiz(),
+      const QuizPage(subject: 'Chemistry', topic: 'Gas Laws'),
+      const QuizPage(subject: 'Chemistry', topic: 'Titration'),
       const ChemistryTitrationQuiz(),
       const ChemistryTitrationQuiz(),
       const ChemistryTitrationQuiz(),

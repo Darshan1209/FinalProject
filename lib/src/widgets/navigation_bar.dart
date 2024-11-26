@@ -70,9 +70,6 @@ class BottomNavigation extends ConsumerWidget {
               tabs: [
                 GButton(
                   icon: Iconsax.home,
-                  iconColor: theme.brightness == Brightness.light
-                      ? Colors.amber
-                      : Colors.red,
                   text: 'Home',
                 ),
                 GButton(

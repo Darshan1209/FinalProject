@@ -50,45 +50,60 @@ class _ChatPageState extends State<ChatPage> {
               itemBuilder: (context, index) {
                 final message = messages[index];
                 final isCurrentUser = message['user'] == currentUser;
-                final isSpeaking = index == currentlySpeakingIndex;
 
-                return ListTile(
-                  leading: isCurrentUser
-                      ? null
-                      : const CircleAvatar(
-                          child: Icon(Icons.android),
-                        ),
-                  trailing: isCurrentUser
-                      ? const CircleAvatar(
-                          child: Icon(Icons.person),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.volume_up),
-                          onPressed: () => _speak(message['text'], index),
-                        ),
-                  title: Align(
-                    alignment: isCurrentUser
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isCurrentUser
-                            ? GeneralAppColors.mainColor
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
+                if (message['type'] == 'image') {
+                  // Render image message
+                  return ListTile(
+                    title: Align(
+                      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Image.file(
+                        File(message['filePath']),
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
                       ),
-                      child: isSpeaking
-                          ? _buildHighlightedText(message['text'])
-                          : Text(
-                              message['text'],
-                              style: TextStyle(
-                                color: isCurrentUser ? Colors.white : Colors.black,
-                              ),
-                            ),
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  // Render text message
+                  final isSpeaking = index == currentlySpeakingIndex;
+
+                  return ListTile(
+                    leading: isCurrentUser
+                        ? null
+                        : const CircleAvatar(
+                            child: Icon(Icons.android),
+                          ),
+                    trailing: isCurrentUser
+                        ? const CircleAvatar(
+                            child: Icon(Icons.person),
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.volume_up),
+                            onPressed: () => _speak(message['text'], index),
+                          ),
+                    title: Align(
+                      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isCurrentUser
+                              ? GeneralAppColors.mainColor
+                              : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: isSpeaking
+                            ? _buildHighlightedText(message['text'])
+                            : Text(
+                                message['text'],
+                                style: TextStyle(
+                                  color: isCurrentUser ? Colors.white : Colors.black,
+                                ),
+                              ),
+                      ),
+                    ),
+                  );
+                }
               },
             ),
           ),
@@ -106,8 +121,12 @@ class _ChatPageState extends State<ChatPage> {
           return TextSpan(
             text: words[index] + " ",
             style: TextStyle(
-              color: index == highlightedWordIndex ? const Color.fromARGB(255, 48, 89, 193) : Colors.black,
-              fontWeight: index == highlightedWordIndex ? FontWeight.bold : FontWeight.normal,
+              color: index == highlightedWordIndex
+                  ? const Color.fromARGB(255, 48, 89, 193)
+                  : Colors.black,
+              fontWeight: index == highlightedWordIndex
+                  ? FontWeight.bold
+                  : FontWeight.normal,
             ),
           );
         }),
@@ -143,6 +162,7 @@ class _ChatPageState extends State<ChatPage> {
 
     final userMessage = {
       'user': currentUser,
+      'type': 'text',
       'text': messageController.text.trim(),
     };
 
@@ -157,11 +177,14 @@ class _ChatPageState extends State<ChatPage> {
     try {
       String fullResponse = "";
       gemini.streamGenerateContent(question).listen((event) {
-        final part = event.content?.parts?.fold("", (prev, current) => "$prev ${current.text}") ?? "";
+        final part = event.content?.parts
+                ?.fold("", (prev, current) => "$prev ${current.text}") ??
+            "";
         fullResponse += part;
       }, onDone: () {
         final geminiMessage = {
           'user': geminiUser,
+          'type': 'text',
           'text': fullResponse.trim(),
         };
         setState(() {
@@ -171,6 +194,7 @@ class _ChatPageState extends State<ChatPage> {
         print("Error: $error");
         final errorMessage = {
           'user': geminiUser,
+          'type': 'text',
           'text': "Sorry, there was an error processing your request.",
         };
         setState(() {
@@ -189,7 +213,8 @@ class _ChatPageState extends State<ChatPage> {
     if (file != null) {
       final userMessage = {
         'user': currentUser,
-        'text': "Describe this picture and answer the question in it.",
+        'type': 'image',
+        'filePath': file.path,
       };
 
       setState(() {
@@ -198,17 +223,20 @@ class _ChatPageState extends State<ChatPage> {
 
       // Send media to Gemini AI
       try {
-        final imageBytes = File(file.path).readAsBytesSync();
+        final imageBytes = await File(file.path).readAsBytes();
         String fullResponse = "";
         gemini.streamGenerateContent(
           "Describe this picture.",
           images: [imageBytes],
         ).listen((event) {
-          final part = event.content?.parts?.fold("", (prev, current) => "$prev ${current.text}") ?? "";
+          final part = event.content?.parts
+                  ?.fold("", (prev, current) => "$prev ${current.text}") ??
+              "";
           fullResponse += part;
         }, onDone: () {
           final geminiMessage = {
             'user': geminiUser,
+            'type': 'text',
             'text': fullResponse.trim(),
           };
           setState(() {
@@ -218,6 +246,7 @@ class _ChatPageState extends State<ChatPage> {
           print("Error: $error");
           final errorMessage = {
             'user': geminiUser,
+            'type': 'text',
             'text': "Sorry, there was an error processing your request.",
           };
           setState(() {
@@ -246,7 +275,8 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {
           highlightedWordIndex = i;
         });
-        await Future.delayed(const Duration(milliseconds: 800)); // Adjust timing based on speech rate
+        await Future.delayed(const Duration(
+            milliseconds: 800)); // Adjust timing based on speech rate
       }
 
       setState(() {

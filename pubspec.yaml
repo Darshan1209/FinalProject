@@ -69,6 +69,30 @@ flutter:
     - assets/images/biologyavatar.png
     - assets/images/chemistryavatar.png
     - assets/images/physicsavatar.png
+    - assets/images/periodicTable1.png
+    - assets/images/gasLaws.png
+    - assets/images/dna.png
+    - assets/images/Diffusion.png
+    - assets/images/chemistry1.png
+    - assets/images/atomicStructure.png
+    - assets/images/acidBase.png
+    - assets/images/cells.png
+    - assets/images/dna.png
+    - assets/images/organSystem.png
+    - assets/images/photosynthesis1.png
+    - assets/images/skeletal.png
+    - assets/images/microscopy.png
+    - assets/images/mitosis.png
+    - assets/images/profile.png
+    
+
+
+
+
+
+
+
+
 
   fonts: 
     - family: Balsamiq Sans

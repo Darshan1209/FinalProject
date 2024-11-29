@@ -15,21 +15,70 @@ class _ChemistryTitrationQuizState extends State<ChemistryTitrationQuiz> {
     // Calculate total correct answers
     _totalCorrect = 0;
     _answers.forEach((question, selectedOption) {
-      if (selectedOption == _correctAnswers[question]) {
+      if (selectedOption.trim() == _correctAnswers[question]?.trim()) {
         _totalCorrect++;
       }
     });
 
-    // Show dialog
+    // Show dialog with improved UI
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Quiz Results"),
-          content: Text(
-              "You got $_totalCorrect out of ${_questions.length} questions correct."),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Column(
+            children: [
+              Icon(
+                Icons.quiz_outlined,
+                size: 60,
+                color: Colors.blueAccent,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Quiz Results",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "You got $_totalCorrect out of ${_questions.length} questions correct!",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey[800],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              LinearProgressIndicator(
+                value: _totalCorrect / _questions.length,
+                backgroundColor: Colors.grey[300],
+                color: Colors.blueAccent,
+                minHeight: 8,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "${((_totalCorrect / _questions.length) * 100).toStringAsFixed(1)}% Score",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 // Reset answers after closing dialog
@@ -37,7 +86,16 @@ class _ChemistryTitrationQuizState extends State<ChemistryTitrationQuiz> {
                   _answers = {};
                 });
               },
-              child: const Text("Close"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                "Close",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -46,49 +104,47 @@ class _ChemistryTitrationQuizState extends State<ChemistryTitrationQuiz> {
   }
 
   final Map<String, List<String>> _questions = {
-    "1. What is the primary purpose of titration in chemistry?": [
-      "To measure the concentration of an unknown solution",
-      "To determine the pH of a solution",
-      "To precipitate a solid from a solution",
-      "To study the kinetics of a reaction"
+    "1. What defines an acid according to the Brønsted-Lowry theory?": [
+      "A substance that donates protons",
+      "A substance that accepts protons",
+      "A substance that increases hydroxide ion concentration",
+      "A substance that decreases hydrogen ion concentration"
     ],
-    "2. Which indicator is commonly used in an acid-base titration?": [
-      "Phenolphthalein",
-      "Methyl orange",
-      "Bromothymol blue",
-      "Litmus"
+    "2. What is the pH of a neutral solution at 25°C?": [
+      "0",
+      "7",
+      "14",
+      "Depends on the concentration of ions"
     ],
-    "3. What is the equivalence point in a titration?": [
-      "The point at which the indicator changes color",
-      "The point at which the titrant and analyte are in stoichiometric proportions",
-      "The point at which the titrant is completely consumed",
-      "The point at which the pH is exactly 7"
+    "3. What is formed when an acid reacts with a base in a neutralization reaction?":
+        [
+      "Salt and water",
+      "Salt and hydrogen gas",
+      "Water and carbon dioxide",
+      "Hydrogen gas and oxygen"
     ],
-    "4. In a titration curve, what does the steep portion represent?": [
-      "Buffer region",
-      "Equivalence point (Correct answer)",
-      "Initial pH",
-      "Endpoint"
+    "4. What type of acid is hydrochloric acid (HCl)?": [
+      "Weak acid",
+      "Strong acid",
+      "Organic acid",
+      "Amphoteric acid"
     ],
-    "5. What is a standard solution in titration?": [
-      "A solution of known concentration used to titrate an unknown solution",
-      "A solution that undergoes a reaction with the analyte",
-      "A solution with an unknown concentration",
-      "A solution used to calibrate the pH meter"
+    "5. Which of the following is an example of a weak base?": [
+      "Sodium hydroxide (NaOH)",
+      "Ammonia (NH₃)",
+      "Calcium hydroxide (Ca(OH)₂)",
+      "Potassium hydroxide (KOH)"
     ],
   };
 
   final Map<String, String> _correctAnswers = {
-    "What is the primary purpose of titration in chemistry?":
-        "To measure the concentration of an unknown solution (Correct answer)",
-    "Which indicator is commonly used in an acid-base titration?":
-        "Phenolphthalein (Correct answer)",
-    "What is the equivalence point in a titration?":
-        "The point at which the titrant and analyte are in stoichiometric proportions (Correct answer)",
-    "In a titration curve, what does the steep portion represent?":
-        "Equivalence point (Correct answer)",
-    "What is a standard solution in titration?":
-        "A solution of known concentration used to titrate an unknown solution (Correct answer)",
+    "1. What defines an acid according to the Brønsted-Lowry theory?":
+        "A substance that donates protons",
+    "2. What is the pH of a neutral solution at 25°C?": "7",
+    "3. What is formed when an acid reacts with a base in a neutralization reaction?":
+        "Salt and water",
+    "4. What type of acid is hydrochloric acid (HCl)?": "Strong acid",
+    "5. Which of the following is an example of a weak base?": "Ammonia (NH₃)",
   };
 
   @override
@@ -97,14 +153,13 @@ class _ChemistryTitrationQuizState extends State<ChemistryTitrationQuiz> {
       appBar: AppBar(
         title: const Text("Chemistry Titration Quiz"),
       ),
-      backgroundColor: Colors.blue.shade700, // Darker shade of blue
       body: SingleChildScrollView(
         child: Column(
           children: _questions.keys.map((question) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
-                color: Colors.blue.shade200, // Lighter shade of blue
+                color: Colors.grey[300], // Lighter shade of blue
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -1,75 +1,42 @@
 import 'package:apt3065/src/screens/PhysicsWavesQuiz.dart';
+import 'package:apt3065/src/widgets/labCards.dart';
 import 'package:flutter/material.dart';
 
 class TestPhysicsTopicsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<String> imagePaths = [
+      'assets/images/electricity.png',
+      'assets/images/gravity.png',
+      'assets/images/pendulum.png',
+      'assets/images/rocket.png',
+      'assets/images/lawsOfMotion.png',
+      'assets/images/refraction.png'
+    ];
+
+    List<String> titles = [
+      'Ohms Law',
+      'Newton\'s Law',
+      'Pendulum Experiment',
+      'Projectile Motion',
+      'First Law of Motion',
+      'Thermal Expansion'
+    ];
+    List<Widget> labs = [
+      PhysicsWavesQuiz(),
+      PhysicsWavesQuiz(),
+      PhysicsWavesQuiz(),
+      PhysicsWavesQuiz(),
+      PhysicsWavesQuiz(),
+      PhysicsWavesQuiz(),
+    ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Physics Topics'),
+        title: const Text('Physics Quiz Topics'),
+        backgroundColor: Colors.grey[300],
       ),
-      backgroundColor: Colors.white, // Set background color to deep orange
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ListView(
-          children: <Widget>[
-            Card(
-              color: Colors.orangeAccent, // Use a lighter shade of orange
-              child: ListTile(
-                title: const Text(
-                  'Heat',
-                ),
-                onTap: () {
-                  // Navigate to Topic 1 page
-                },
-              ),
-            ),
-            const SizedBox(height: 10), // Add space between cards
-            Card(
-              color: Colors.orangeAccent, // Use a lighter shade of orange
-              child: ListTile(
-                title: const Text('Sound'),
-                onTap: () {
-                  // Navigate to Topic 2 page
-                },
-              ),
-            ),
-            const SizedBox(height: 10), // Add space between cards
-            Card(
-              color: Colors.orangeAccent, // Use a lighter shade of orange
-              child: ListTile(
-                title: const Text('Waves'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PhysicsWavesQuiz()),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10), // Add space between cards
-            Card(
-              color: Colors.orangeAccent, // Use a lighter shade of orange
-              child: ListTile(
-                title: const Text('Light'),
-                onTap: () {
-                  // Navigate to Topic 4 page
-                },
-              ),
-            ),
-            const SizedBox(height: 10), // Add space between cards
-            Card(
-              color: Colors.orangeAccent, // Use a lighter shade of orange
-              child: ListTile(
-                title: const Text('Force'),
-                onTap: () {
-                  // Navigate to Topic 5 page
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+      backgroundColor: Colors.grey[300], // Set background color to deep orange
+      body: LabCards(titles: titles, labs: labs, imagePaths: imagePaths),
     );
   }
 }

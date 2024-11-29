@@ -1,17 +1,27 @@
+import 'dart:developer';
+
+import 'package:apt3065/src/constants/colors.dart';
+import 'package:apt3065/src/utils/FlashCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class QuizPage extends StatefulWidget {
   final String subject;
+  final String topic;
 
-  const QuizPage({super.key, required this.subject});
+  const QuizPage({
+    super.key,
+    required this.subject,
+    required this.topic,
+  });
 
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
-  late List<Question> _questions;
+  List<Question> _questions = [];
+  int _currentQuestionIndex = 0;
   Map<String, dynamic> _userAnswers = {};
 
   @override
@@ -26,71 +36,69 @@ class _QuizPageState extends State<QuizPage> {
           .collection('Subjects')
           .doc(widget.subject)
           .collection('Topics')
-          .doc('Cells')
+          .doc(widget.topic)
           .collection('Quizzes')
           .get();
+
+      log("Fetched Quiz Documents");
 
       setState(() {
         _questions = querySnapshot.docs.map((doc) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          log("Processing question: ${doc.id}");
+
+          // Extract the options and sort them alphabetically by key
+          Map<String, bool> options = {};
+          String correctAnswer = "";
+
+          data.forEach((key, value) {
+            options[key] = value as bool;
+            if (value == true) {
+              correctAnswer = key; // Store the correct answer
+            }
+          });
+
+          // Sort options by their keys (e.g., A, B, C, D)
+          final sortedOptions = Map.fromEntries(
+            options.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+          );
+
           return Question(
             id: doc.id,
-            question: data['question'],
-            options: Map<String, dynamic>.from(data['options']),
-            correctAnswer: data['correctAnswer'],
+            question: doc.id, // The question is the document ID
+            options: sortedOptions,
+            correctAnswer: correctAnswer,
           );
         }).toList();
+
+        log('Questions loaded: ${_questions.length}');
       });
     } catch (e) {
-      print("Error fetching quiz questions: $e");
-      // Handle error
+      log("Error fetching quiz questions: $e");
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.subject + ' Quiz'),
-      ),
-      body: _questions == null
-          ? Center(
-              child:
-                  CircularProgressIndicator()) // Show loading indicator until questions are loaded
-          : ListView.builder(
-              itemCount: _questions.length,
-              itemBuilder: (context, index) {
-                return QuestionWidget(
-                  question: _questions[index],
-                  onChanged: (String answer) {
-                    setState(() {
-                      _userAnswers[_questions[index].id] = answer;
-                    });
-                  },
-                );
-              },
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showResultDialog,
-        child: Icon(Icons.check),
-      ),
-    );
+  void _onCardSwipe(bool isCorrect) {
+    if (_currentQuestionIndex < _questions.length - 1) {
+      setState(() {
+        _userAnswers[_questions[_currentQuestionIndex].id] =
+            isCorrect ? _questions[_currentQuestionIndex].correctAnswer : null;
+        _currentQuestionIndex++;
+      });
+    } else {
+      _showResultDialog();
+    }
   }
 
   void _showResultDialog() {
-    int correctAnswers = 0;
-    _questions.forEach((question) {
-      if (_userAnswers.containsKey(question.id) &&
-          _userAnswers[question.id] == question.correctAnswer) {
-        correctAnswers++;
-      }
-    });
+    int correctAnswers =
+        _userAnswers.values.where((answer) => answer != null).length;
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Quiz Result'),
+          title: const Text('Quiz Result'),
           content: Text(
               'You got $correctAnswers out of ${_questions.length} questions correct.'),
           actions: [
@@ -98,11 +106,27 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
           ],
         );
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${widget.subject} Quiz'),
+      ),
+      body: _questions.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : QuizFlashCard(
+              question: _questions[_currentQuestionIndex],
+              onSwipe: _onCardSwipe,
+              subject: widget.subject,
+            ),
     );
   }
 }
@@ -119,43 +143,4 @@ class Question {
     required this.options,
     required this.correctAnswer,
   });
-}
-
-typedef void OnAnswerSelected(String answer);
-
-class QuestionWidget extends StatelessWidget {
-  final Question question;
-  final OnAnswerSelected onChanged;
-
-  const QuestionWidget({required this.question, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              question.question,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            ...question.options.entries.map((entry) {
-              return RadioListTile(
-                title: Text(entry.key),
-                value: entry.key,
-                groupValue: null,
-                onChanged: (value) {
-                  onChanged(entry.key);
-                },
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
 }

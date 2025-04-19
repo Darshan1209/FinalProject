@@ -4,9 +4,11 @@ import 'package:apt3065/src/constants/txt.dart';
 import 'package:apt3065/src/screens/forgot_password.dart';
 import 'package:apt3065/src/screens/signup.dart';
 import 'package:apt3065/src/utils/auth_controller.dart';
+import 'package:apt3065/src/utils/consumers_helper.dart';
 import 'package:apt3065/src/utils/firebase_services.dart';
 import 'package:apt3065/src/utils/responsive_helper.dart';
 import 'package:apt3065/src/widgets/custom_form_field.dart';
+import 'package:apt3065/src/widgets/navigation_bar.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -128,7 +130,7 @@ class LoginPage extends ConsumerWidget {
                         height: height * 0.02,
                       ),
                       GestureDetector(
-                        onTap: login,
+                        onTap: () => login(ref),
                         child: Container(
                             width: width * 0.45,
                             height: height * 0.1 < 0.1 ? height * 0.6 : 57,
@@ -289,7 +291,7 @@ class LoginPage extends ConsumerWidget {
     );
   }
 
-  void login() async {
+  void login(WidgetRef ref) async {
     bool isValid = EmailValidator.validate(emailController.text.trim());
 
     String email = emailController.text.trim();
@@ -306,7 +308,9 @@ class LoginPage extends ConsumerWidget {
           snackPosition: SnackPosition.BOTTOM);
     } else {
       AuthenticationService authService = AuthenticationService();
-      authService.loginUser(email: email, password: password);
+      await authService.loginUser(email: email, password: password);
+      await ref.refresh(CurrentUserDataProvider);
+      Get.offAll(() => BottomNavigation());
     }
   }
 

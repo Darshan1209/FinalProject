@@ -36,11 +36,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // return GetMaterialApp.router(
-    //   routeInformationParser: router.routeInformationParser,
-    //   routerDelegate: router.routerDelegate,
-    //   routeInformationProvider: router.routeInformationProvider,
-    // );
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'StudyApp',

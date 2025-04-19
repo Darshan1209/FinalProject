@@ -1,4 +1,5 @@
 import 'package:apt3065/src/screens/BiologyQuiz.dart';
+import 'package:apt3065/src/screens/QuizPage.dart';
 import 'package:apt3065/src/utils/FlashCard.dart';
 import 'package:apt3065/src/widgets/labCards.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class TestBiologyTopicsPage extends StatelessWidget {
     ];
 
     List<String> titles = [
-      'Cell Biology',
+      'Cells',
       'Microscopy',
       'Mitosis ',
       'Skeletal System',
@@ -26,7 +27,10 @@ class TestBiologyTopicsPage extends StatelessWidget {
       'Photosynthesis'
     ];
     List<Widget> labs = [
-      BiologyQuiz(),
+      QuizPage(
+        subject: 'Biology',
+        topic: 'Cells',
+      ),
       BiologyQuiz(),
       BiologyQuiz(),
       BiologyQuiz(),

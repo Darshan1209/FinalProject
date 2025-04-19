@@ -1,3 +1,4 @@
+import 'package:apt3065/src/screens/biologyLabs/photosynthesisLab.dart';
 import 'package:apt3065/src/screens/chemistry_notespage.dart';
 import 'package:apt3065/src/screens/chemistry_videospage.dart';
 import 'package:apt3065/src/screens/videos_page.dart';
@@ -159,7 +160,43 @@ class _BiologyExperimentsListState extends State<BiologyExperimentsList> {
       case 'Videos':
         return VideosPage(topicName: widget.topicName);
       case 'Labs':
-        return ChemistryLabsPageRedirect();
+        return GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return PhotosynthesisSimulator();
+              }));
+            },
+            child: Container(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Navigate to the experiment page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PhotosynthesisSimulator()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue, // Button background color
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20.0), // Rounded corners
+                      ),
+                      minimumSize: Size(200, 60), // Set button size
+                    ),
+                    child: Text(
+                      'Click to Navigate to ${widget.topicName} Lab',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white), // Text color and size
+                    ),
+                  ),
+                ),
+              ),
+            ));
       default:
         return Container(); // Handle other cases if needed
     }

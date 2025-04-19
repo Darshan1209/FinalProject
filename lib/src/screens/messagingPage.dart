@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:apt3065/src/constants/colors.dart';
 import 'package:apt3065/src/widgets/chat_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ class MessagePage extends StatefulWidget {
   final String receiverUserEmail;
   final String receiverUserId;
   final String receiverUserName;
+
   const MessagePage({
     super.key,
     required this.receiverUserEmail,
@@ -34,6 +36,19 @@ class _MessagePageState extends State<MessagePage> {
     }
   }
 
+  void _markMessagesAsRead() async {
+    List<String> ids = [_firebaseAuth.currentUser!.uid, widget.receiverUserId];
+    ids.sort();
+    String chatRoomId = ids.join('_');
+    await _chatService.markMessagesAsRead(chatRoomId);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _markMessagesAsRead();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,24 +66,36 @@ class _MessagePageState extends State<MessagePage> {
 
   Widget _buildMessageList() {
     return StreamBuilder(
-        stream: _chatService.getMessages(
-            widget.receiverUserId, _firebaseAuth.currentUser!.uid),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading...');
-          }
-          return ListView(
-            children: snapshot.data!.docs
-                .map((document) => _buildMessageItem(document))
-                .toList(),
-          );
-        });
+      stream: _chatService.getMessages(
+          widget.receiverUserId, _firebaseAuth.currentUser!.uid),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text('Loading...');
+        }
+        return ListView(
+          children: snapshot.data!.docs.map((document) {
+            if (document['receiverId'] == _firebaseAuth.currentUser!.uid &&
+                document['isRead'] == false) {
+              _chatService.markMessageAsRead(
+                  document.id, widget.receiverUserId);
+            }
+            return FutureBuilder<String?>(
+              future: _chatService.fetchUserProfileImage(document['senderId']),
+              builder: (context, imageSnapshot) {
+                String? imageLink = imageSnapshot.data;
+                return _buildMessageItem(document, imageLink);
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
   }
 
-  Widget _buildMessageItem(DocumentSnapshot document) {
+  Widget _buildMessageItem(DocumentSnapshot document, String? imageLink) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
     bool isSentByCurrentUser =
@@ -77,31 +104,47 @@ class _MessagePageState extends State<MessagePage> {
     return Align(
       alignment:
           isSentByCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-        decoration: BoxDecoration(
-          color: isSentByCurrentUser
-              ? GeneralAppColors.mainColor
-              : Colors.grey[300],
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: isSentByCurrentUser
-                ? const Radius.circular(16)
-                : const Radius.circular(0),
-            bottomRight: isSentByCurrentUser
-                ? const Radius.circular(0)
-                : const Radius.circular(16),
+      child: Row(
+        mainAxisAlignment: isSentByCurrentUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        children: [
+          if (!isSentByCurrentUser)
+            CircleAvatar(
+              radius: 18,
+              backgroundImage: imageLink != null
+                  ? CachedNetworkImageProvider(imageLink)
+                  : const AssetImage('assets/images/profile.png')
+                      as ImageProvider<Object>,
+            ),
+          const SizedBox(width: 8), // Spacing between avatar and message
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+            decoration: BoxDecoration(
+              color: isSentByCurrentUser
+                  ? GeneralAppColors.mainColor
+                  : Colors.grey[300],
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(16),
+                topRight: const Radius.circular(16),
+                bottomLeft: isSentByCurrentUser
+                    ? const Radius.circular(16)
+                    : const Radius.circular(0),
+                bottomRight: isSentByCurrentUser
+                    ? const Radius.circular(0)
+                    : const Radius.circular(16),
+              ),
+            ),
+            child: Text(
+              data['message'],
+              style: TextStyle(
+                color: isSentByCurrentUser ? Colors.white : Colors.black87,
+                fontSize: 16,
+              ),
+            ),
           ),
-        ),
-        child: Text(
-          data['message'],
-          style: TextStyle(
-            color: isSentByCurrentUser ? Colors.white : Colors.black87,
-            fontSize: 16,
-          ),
-        ),
+        ],
       ),
     );
   }

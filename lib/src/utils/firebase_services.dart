@@ -20,7 +20,6 @@ class AuthenticationService {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      Get.offAll(BottomNavigation());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Get.snackbar("Authentication Error", "User not found",

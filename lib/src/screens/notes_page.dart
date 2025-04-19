@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apt3065/src/utils/consumers_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +16,8 @@ class BiologyNotesPage extends StatefulWidget {
 class _BiologyNotesPageState extends State<BiologyNotesPage> {
   @override
   Widget build(BuildContext context) {
+    log("blahhh");
+
     final ScrollController _scrollController = ScrollController();
 
     return Scaffold(
@@ -25,6 +29,7 @@ class _BiologyNotesPageState extends State<BiologyNotesPage> {
                 ref.watch(topicNotesReaderProvider(widget.topicName));
             return notesPagedata.when(
                 data: (NotesData) {
+                  log(NotesData.toString());
                   List<String> stepsString =
                       NotesData[0]['Steps'].toString().split("\\n");
                   return Column(

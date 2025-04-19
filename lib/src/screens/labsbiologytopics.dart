@@ -16,7 +16,7 @@ class LabsBiologyTopicsPage extends StatelessWidget {
     ];
 
     List<String> titles = [
-      'Cell Biology',
+      'Cells',
       'Microscopy',
       'Mitosis and Meiosis',
       'Skeletal System',

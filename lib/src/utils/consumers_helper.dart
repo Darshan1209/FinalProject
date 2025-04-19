@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apt3065/src/utils/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +66,9 @@ final topicNotesReaderProvider =
     FutureProvider.family<List<Map<String, dynamic>>, String>(
         (ref, topicName) async {
   String subjectName = '';
-  if (topicName == 'Diffusion' || topicName == 'Cells') {
+  if (topicName == 'Diffusion' ||
+      topicName == 'Cells' ||
+      topicName == 'Photosynthesis') {
     subjectName = 'Biology';
   } else if (topicName == "Waves" || topicName == "Pendulum") {
     subjectName = 'Physics';
@@ -119,7 +123,9 @@ final topicVideosReaderProvider =
     FutureProvider.family<List<Map<String, dynamic>>, String>(
         (ref, topicName) async {
   String subjectName = '';
-  if (topicName == 'Diffusion' || topicName == 'Cells') {
+  if (topicName == 'Diffusion' ||
+      topicName == 'Cells' ||
+      topicName == 'Photosynthesis') {
     subjectName = 'Biology';
   } else if (topicName == "Waves" || topicName == "Pendulum") {
     subjectName = 'Physics';

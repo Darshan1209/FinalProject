@@ -28,6 +28,12 @@ class _ChatPageState extends State<ChatPage> {
   final String geminiUser = "Gemini";
 
   @override
+  void initState() {
+    super.initState();
+    flutterTts.awaitSpeakCompletion(true); // Ensure TTS finishes one word before starting the next
+  }
+
+  @override
   void dispose() {
     flutterTts.stop(); // Stop TTS when leaving the screen
     messageController.dispose();
@@ -178,7 +184,7 @@ class _ChatPageState extends State<ChatPage> {
       String fullResponse = "";
       gemini.streamGenerateContent(question).listen((event) {
         final part = event.content?.parts
-                ?.fold("", (prev, current) => "$prev ${current.text}") ??
+                ?.fold("", (prev, current) => "$prev ${current.text}") ?? 
             "";
         fullResponse += part;
       }, onDone: () {
@@ -230,7 +236,7 @@ class _ChatPageState extends State<ChatPage> {
           images: [imageBytes],
         ).listen((event) {
           final part = event.content?.parts
-                  ?.fold("", (prev, current) => "$prev ${current.text}") ??
+                  ?.fold("", (prev, current) => "$prev ${current.text}") ?? 
               "";
           fullResponse += part;
         }, onDone: () {
@@ -259,33 +265,37 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Future<void> _speak(String text, int index) async {
-    try {
+ Future<void> _speak(String text, int index) async {
+  try {
+    setState(() {
+      currentlySpeakingIndex = index;
+      highlightedWords = text.split(" ");
+      highlightedWordIndex = 0;
+    });
+
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(1.7); // Increased speed of speech
+    await flutterTts.setPitch(1.5); // Optional: Adjust pitch for a natural tone
+
+    for (int i = 0; i < highlightedWords.length; i++) {
+      await flutterTts.speak(highlightedWords[i]);
       setState(() {
-        currentlySpeakingIndex = index;
-        highlightedWords = text.split(" ");
-        highlightedWordIndex = 0;
+        highlightedWordIndex = i;
       });
 
-      await flutterTts.setLanguage("en-US");
-      await flutterTts.setSpeechRate(0.5);
-
-      for (int i = 0; i < highlightedWords.length; i++) {
-        await flutterTts.speak(highlightedWords[i]);
-        setState(() {
-          highlightedWordIndex = i;
-        });
-        await Future.delayed(const Duration(
-            milliseconds: 800)); // Adjust timing based on speech rate
-      }
-
-      setState(() {
-        currentlySpeakingIndex = null;
-        highlightedWordIndex = null;
-        highlightedWords = [];
-      });
-    } catch (e) {
-      print("Error in Text-to-Speech: $e");
+      // Adjust the delay duration to make highlighting faster
+      await Future.delayed(
+        Duration(milliseconds: (highlightedWords[i].length * 50).clamp(100, 500)), 
+      );
     }
+
+    setState(() {
+      currentlySpeakingIndex = null;
+      highlightedWordIndex = null;
+      highlightedWords = [];
+    });
+  } catch (e) {
+    print("Error in Text-to-Speech: $e");
   }
+}
 }
